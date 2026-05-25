@@ -2,6 +2,8 @@
 
 A reference I compiled while studying for certs and different courses, covering Active Directory attacks, web application vulnerabilities, post-exploitation, and common tools.
 
+> Note that these notes were compiled while studying for PJPT (Completed), CRTP, CPTS, and OSCP. AI was used to restructure them into this publishing format.
+
 ## Contents
 
 - **Methodology** — Engagement process and pentest phases
