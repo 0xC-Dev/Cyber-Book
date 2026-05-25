@@ -1,4 +1,4 @@
-﻿# Passive Recon & OSINT
+# Passive Recon & OSINT
 
 > No direct contact with target systems — all open-source discovery.
 

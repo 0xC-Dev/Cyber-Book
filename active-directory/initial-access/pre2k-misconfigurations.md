@@ -1,6 +1,6 @@
 # Pre2k & AD Misconfigurations
 
-These are AD configuration weaknesses — no exploits needed, just misconfigured settings that hand you credentials or access.
+Read the technical blog by [TrustedSec](https://www.trustedsec.com/blog/diving-into-pre-created-computer-accounts).
 
 ---
 
