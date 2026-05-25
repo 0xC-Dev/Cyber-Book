@@ -34,7 +34,7 @@ A Diamond Ticket is a technique that requests a **real, legitimate TGT from the 
 | DC IP or hostname | From enumeration |
 | Domain FQDN | `corp.local` |
 
-**Important:** You need the krbtgt AES256 key, not just the NTLM hash. AES is required for the `/tgtdeleg` trick. Get both when you DCSync.
+**Note:** Grab both the krbtgt NTLM hash and AES256 key when you DCSync — Rubeus accepts either via `/krbkey:`, but AES is strongly preferred. RC4-encrypted tickets stand out in modern environments (NTLM/RC4 usage is often alerted on), and `/enctype:aes` produces tickets indistinguishable from legitimate AES Kerberos traffic.
 
 ---
 

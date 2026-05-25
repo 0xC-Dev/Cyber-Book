@@ -76,7 +76,7 @@ hashcat -m 18200 asrep.txt /usr/share/wordlists/rockyou.txt
 | Service account with weak password | Enforce 25+ character passwords on all service accounts — makes offline cracking computationally infeasible |
 | Service account has Domain Admin rights | Apply **least privilege** — service accounts should only have rights to the specific systems/resources they serve, not domain-wide admin |
 | Many Kerberoastable accounts | Audit all accounts with SPNs set: `Get-DomainUser -SPN` — remove SPNs that are not needed |
-| Service account is human-managed | Replace with **Group Managed Service Accounts (gMSA)** — AD auto-rotates the password (240-char random) every 30 days, making cracking impossible |
+| Service account is human-managed | Replace with **Group Managed Service Accounts (gMSA)** — AD generates a 240-byte cryptographically random password and auto-rotates it (default every 30 days). The password is never exposed to humans; AD distributes it on demand to authorized hosts. Cracking is computationally infeasible. |
 | AS-REP roastable accounts | Enable "Kerberos preauthentication required" on all accounts — this is the default, only disable if a specific legacy system requires it |
 
 **Key point for reports:** Kerberoasting is completely passive and requires only a low-privilege domain account. The only real fix is gMSA (removes the crackable password entirely) or 25+ char random passwords managed in a PAM vault.

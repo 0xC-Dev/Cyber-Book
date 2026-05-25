@@ -6,7 +6,7 @@
 
 ## What It Is
 
-**ACCESSLESS ATTACK** — requires zero credentials, just network presence.
+**Zero credentials required — only network presence on the same broadcast domain as the targets.**
 
 Windows prefers IPv6 over IPv4 by default, even when the network has no IPv6 infrastructure. mitm6 exploits this:
 

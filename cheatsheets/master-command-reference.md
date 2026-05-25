@@ -103,8 +103,8 @@ hashcat -m 13100 tgs.txt /usr/share/wordlists/rockyou.txt
 # AS-REP
 hashcat -m 18200 asrep.txt /usr/share/wordlists/rockyou.txt
 
-# DCC2
-hashcat -m 21000 dcc2.txt /usr/share/wordlists/rockyou.txt
+# DCC2 (cached domain creds)
+hashcat -m 2100 dcc2.txt /usr/share/wordlists/rockyou.txt
 
 # Show cracked
 hashcat --show -m <mode> hashes.txt

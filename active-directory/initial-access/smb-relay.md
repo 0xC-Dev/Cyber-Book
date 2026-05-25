@@ -23,7 +23,7 @@ The flow:
 |---|---|
 | Attacker on same network segment | SMB relay only works locally — cannot relay across routers |
 | SMB signing disabled/not enforced on target | DCs always enforce signing — workstations usually do not |
-| Relayed user is local admin on target | If they are not admin, you get an auth but cannot do anything useful |
+| Relayed user has meaningful rights on target | Local admin gives you SAM dump or command execution. A regular user still works for read access to shares the user can reach, LDAP queries against a DC, etc. — but the high-impact paths require admin rights on the target. |
 
 **SMB signing note:** Domain Controllers have signing **required** by default — you cannot relay to a DC. Workstations have signing **enabled but not required** by default — these are your targets.
 

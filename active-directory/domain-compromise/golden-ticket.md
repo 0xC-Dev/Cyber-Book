@@ -88,7 +88,7 @@ psexec.exe \\dc01.corp.local cmd
 
 | Finding | Remediation |
 |---|---|
-| krbtgt hash was compromised | Reset the **krbtgt password twice** (two resets, 10+ hours apart to let replication complete). A single reset is not enough — old tickets are valid until they expire or the hash changes twice. |
+| krbtgt hash was compromised | Reset the **krbtgt password twice** (two resets, separated by at least the maximum TGT lifetime — 10 hours by default — to let existing tickets expire). Kerberos validates tickets against both the current and previous krbtgt key, so a single reset only invalidates tickets older than the second-to-last reset. The first reset moves the compromised key to "previous"; the second reset retires it entirely. Microsoft's `Reset-KrbtgtKeyInteractive` script enforces this correctly. |
 | DCSync was performed | Change the krbtgt password twice. Audit which accounts have DCSync rights and remove any non-standard accounts. |
 | DA was compromised | Rotate ALL privileged account passwords. Assume every secret on the domain is burned. |
 | No detection of ticket forgery | Monitor: Event ID 4769 (TGS requested) with unusual encryption types, Event ID 4672 (special privileges assigned) on DCs, and Kerberos tickets with lifetimes > 10 hours. |

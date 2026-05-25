@@ -3,6 +3,7 @@
 ---
 
 ## Hashcat Mode Reference
+https://hashcat.net/wiki/doku.php?id=example_hashes
 
 | Mode | Hash Type | Example Start |
 |---|---|---|

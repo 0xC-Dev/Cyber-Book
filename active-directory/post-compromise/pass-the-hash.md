@@ -18,7 +18,7 @@ This works against:
 - Many other NTLM-capable services
 
 - `(Pwn3d!)` in output = **local admin** on that machine
-- Only **NT hashes** (NTLMv1) can be passed — NTLMv2 hashes (captured by Responder) must be cracked or relayed, not passed directly
+- **Only NT hashes can be passed.** The NT hash is the MD4 hash of the user's password, stored in SAM/NTDS (16 bytes, 32 hex characters). NetNTLMv2 hashes captured by Responder are challenge-response authentication exchanges — not password hashes. They must be cracked offline or relayed, never passed directly. Don't confuse "NT hash" (password hash) with "NTLMv1/NTLMv2" (auth protocols that use the NT hash).
 
 ---
 
