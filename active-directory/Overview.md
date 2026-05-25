@@ -1,4 +1,4 @@
-﻿# Active Directory Overview
+# Active Directory Overview
 
 ---
 
