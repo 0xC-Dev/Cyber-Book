@@ -1,3 +1,5 @@
+![](../assets/cyberbook-logo.png)
+
 # Penetration Testing Reference
 
 A reference I compiled while studying for certs and different courses, covering Active Directory attacks, web application vulnerabilities, post-exploitation, and common tools.
@@ -16,4 +18,6 @@ A reference I compiled while studying for certs and different courses, covering 
 - **Exploits & CVEs** — Notable vulnerabilities with exploitation steps
 - **Cheatsheets** — Quick-reference command tables
 
-Each section includes attack steps, tool syntax, and remediation guidance.
+Each section includes attack steps, tool syntax, and remediation guidance. Feel free to make pull request to help expand the notebook.
+
+Link-to-Notebook: https://notebook.davidtouma.ca
