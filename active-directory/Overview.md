@@ -94,3 +94,5 @@ Domain Admin → Dump NTDS.dit → All hashes → Golden Ticket
 | Mimikatz | [post-compromise/mimikatz.md](post-compromise/mimikatz.md) |
 | NTDS.dit Dump | [domain-compromise/dumping-ntds.md](domain-compromise/dumping-ntds.md) |
 | Golden Ticket | [domain-compromise/golden-ticket.md](domain-compromise/golden-ticket.md) |
+| Skeleton Key | [domain-compromise/skeleton-key.md](domain-compromise/skeleton-key.md) |
+| DSRM | [domain-compromise/dsrm.md](domain-compromise/dsrm.md) |
