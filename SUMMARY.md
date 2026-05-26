@@ -45,6 +45,7 @@
   * [Diamond Ticket](active-directory/domain-compromise/diamond-ticket.md)
   * [Skeleton Key](active-directory/domain-compromise/skeleton-key.md)
   * [DSRM](active-directory/domain-compromise/dsrm.md)
+  * [Custom SSP](active-directory/domain-compromise/custom-ssp.md)
 
 ## Post-Exploitation
 * [Linux Privilege Escalation](post-exploitation/linux-privesc.md)

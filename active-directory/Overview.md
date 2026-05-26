@@ -96,3 +96,4 @@ Domain Admin → Dump NTDS.dit → All hashes → Golden Ticket
 | Golden Ticket | [domain-compromise/golden-ticket.md](domain-compromise/golden-ticket.md) |
 | Skeleton Key | [domain-compromise/skeleton-key.md](domain-compromise/skeleton-key.md) |
 | DSRM | [domain-compromise/dsrm.md](domain-compromise/dsrm.md) |
+| Custom SSP | [domain-compromise/custom-ssp.md](domain-compromise/custom-ssp.md) |
