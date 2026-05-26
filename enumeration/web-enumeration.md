@@ -1,4 +1,4 @@
-﻿# Web Enumeration
+# Web Enumeration
 
 ---
 
@@ -22,7 +22,7 @@ gobuster dns -d domain.com -w /usr/share/seclists/Discovery/DNS/subdomains-top1m
 
 ### VHost Brute Force
 ```sh
-gobuster vhost -u http://<ip> -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt
+gobuster vhost -u http://<ip> -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt --append-domain
 ```
 
 ---
