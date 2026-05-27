@@ -25,6 +25,19 @@ A Diamond Ticket is a technique that requests a **real, legitimate TGT from the 
 
 ---
 
+## Privileges Required
+
+| Phase | Account / Privilege | Why |
+|---|---|---|
+| **Setup** — obtain the krbtgt AES256 key | **Domain Admin** / DCSync rights | Same prerequisite as Golden — krbtgt key only comes from a DC |
+| **Setup** — supply a real user credential | **Any authenticated domain user** | Rubeus requests a *real* TGT first, then modifies its PAC — even a low-priv account works as the "host" identity |
+| **Forge / re-sign the PAC** | **None** — attacker box | PAC modification and re-signing happen offline once you have the krbtgt key |
+| **Exploit** — use the ticket | **None** | Modified ticket impersonates the user with elevated group memberships |
+
+**Get there:** Same path as [Golden Ticket](golden-ticket.md) — DA first, then DCSync the krbtgt. The "real user creds" requirement is trivially satisfied by any account you cracked along the way.
+
+---
+
 ## What You Need
 
 | Requirement | How to Get It |

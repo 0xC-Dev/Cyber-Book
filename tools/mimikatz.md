@@ -5,6 +5,28 @@
 
 ---
 
+## Privileges Required (per command family)
+
+| Command family | Privilege needed | Why |
+|---|---|---|
+| `privilege::debug` (prelude) | **Local Admin** (elevated) | Enables `SeDebugPrivilege` on your token — needed to open `lsass.exe` |
+| `token::elevate` | **Local Admin** | Upgrades your token from admin → SYSTEM. Required for SAM access |
+| `sekurlsa::*` (LSASS reads — `logonPasswords`, `tickets`, `ekeys`, `msv`) | **SYSTEM + SeDebugPrivilege** | Cross-process LSASS memory reads |
+| `sekurlsa::pth` | **SYSTEM + SeDebugPrivilege** | Spawns a new process and rewrites its credential material inside LSASS |
+| `lsadump::sam`, `lsadump::secrets`, `lsadump::cache` | **SYSTEM** | Reads encrypted local SAM / LSA secrets hives |
+| `lsadump::dcsync` | **A domain account with DCSync rights** (`DS-Replication-Get-Changes-All`) — **does NOT need local admin/SYSTEM** | Network MS-DRSR replication call. The account's identity is what authorizes; you can run this unelevated on your Kali |
+| `kerberos::ptt`, `kerberos::golden /ptt`, `tgt::ptt` | **None** | Ticket injection into your own session — runs as your user |
+| `misc::skeleton`, `misc::memssp` | **SYSTEM on a DC + SeDebugPrivilege** | Patches LSASS memory on a DC |
+
+**Blockers (modern AD environments):**
+- **LSA Protection (RunAsPPL)** — blocks LSASS reads/writes even from SYSTEM unless a signed kernel driver disables PPL first. Kills all `sekurlsa::*` and `misc::skeleton` / `misc::memssp`
+- **Credential Guard** — even when LSASS reads succeed, NTLM hashes and Kerberos secrets sit in a VBS enclave and return as zeros
+- **EDR / AV** — Mimikatz signatures are universal; expect detection on touch. Forks like pypykatz, Invoke-Mimi, and SafetyKatz exist for evasion
+
+**Get there:** [Windows PrivEsc](../post-exploitation/windows-privesc.md) for local admin → SYSTEM on a host. For `lsadump::dcsync` (the one command that needs a *domain* privilege, not a local one), see [BloodHound](../active-directory/enumeration/bloodhound.md) to find accounts with replication rights, then the AD attack chain ([Kerberoasting](../active-directory/post-compromise/kerberoasting.md), [ACL Abuse](../active-directory/post-compromise/acl-abuse.md), [ADCS Attacks](../active-directory/post-compromise/adcs-attacks.md)) to reach one.
+
+---
+
 ## sekurlsa:: — LSASS Memory (Logged-in Users)
 
 LSASS is the process that holds credentials for currently logged-in users. These commands read directly from it.

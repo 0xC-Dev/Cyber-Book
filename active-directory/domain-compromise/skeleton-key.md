@@ -12,6 +12,18 @@ Full syntax and every flag explained: [Mimikatz](../../tools/mimikatz.md)
 
 ---
 
+## Privileges Required
+
+| Phase | Account / Privilege | Why |
+|---|---|---|
+| Land on the DC | **Domain Admin** (or any account that's local admin on a DC) | You need a session on a DC with the rights to escalate to SYSTEM |
+| Patch LSASS (`misc::skeleton`) | **SYSTEM on the DC + SeDebugPrivilege** | Mimikatz `privilege::debug` opens a handle to lsass.exe and writes the patch — only SYSTEM (or PPL with a signed driver) can do this |
+| Use the master password afterwards | **None — any unprivileged remote user** | Just send `domain\user` + password `mimikatz` over SMB / WinRM / RDP — the patched DC accepts it for *any* account |
+
+**Blocker:** LSA Protection (RunAsPPL) prevents the LSASS write even from SYSTEM unless you load a signed kernel driver to disable PPL first.
+
+---
+
 ## When You Use This
 
 **You already have DA on a DC** and want quick, in-memory persistence without:

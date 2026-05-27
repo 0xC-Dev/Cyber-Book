@@ -14,6 +14,18 @@ By default DSRM can only log on **at the console in DSRM boot mode**. But with o
 
 ---
 
+## Privileges Required
+
+| Phase | Account / Privilege | Why |
+|---|---|---|
+| Dump the DSRM hash (`lsadump::sam`) | **SYSTEM on the DC** | Reading the local SAM hive requires SYSTEM. Get there via DA → PSExec → SYSTEM, or `token::elevate` inside Mimikatz |
+| Enable network logon (`DsrmAdminLogonBehavior=2`) | **Local Administrator on the DC** | Writes under `HKLM\System\CurrentControlSet\Control\Lsa` require admin. DA on the DC already has this |
+| Pass-the-Hash as DSRM Administrator | **None on the attacker side** | PTH is network auth — possession of the NTLM hash is the authorization. You only need network access to the DC's SMB / RPC |
+
+**Note:** The DSRM hash is a *local* SAM credential, not a domain credential — PTH against the DC's `Administrator` account, with the DC's **computer name** as the domain field. Don't get this wrong; PTH against `corp.local\Administrator` is a totally different (and stronger) credential.
+
+---
+
 ## When You Use This
 
 **You already have DA on a DC** and want persistence that:

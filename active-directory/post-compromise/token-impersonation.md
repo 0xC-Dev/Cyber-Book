@@ -4,6 +4,18 @@ Full tool syntax: [PrintSpoofer & Potato Attacks](../../tools/printspoofer-potat
 
 ---
 
+## Privileges Required
+
+| Phase | Account / Privilege | Why |
+|---|---|---|
+| **Setup** — land on the target as the right kind of account | A service account that **already holds `SeImpersonatePrivilege`** (e.g. `IIS APPPOOL\*`, `NT AUTHORITY\NETWORK SERVICE`, `NT AUTHORITY\LOCAL SERVICE`, `mssql$`, `jenkins`) | You can't grant yourself SeImpersonate from nothing — you have to land in an account that already has it. A normal-user shell will not work for this attack |
+| **Exploit** — run PrintSpoofer / GodPotato / RoguePotato | **`SeImpersonatePrivilege` on the current token** | The tool calls `CoGetInstanceFromIStorage` / DCOM RPC tricks that require this exact privilege |
+| **Result** | **NT AUTHORITY\SYSTEM** | One-shot escalation from any SeImpersonate-bearing service account |
+
+**Get there:** SeImpersonate is the privesc — you don't escalate *to* it, you find it on the account you already landed as. Typical entry points: IIS web app RCE (PHP/ASPX upload), MSSQL `xp_cmdshell`, Jenkins script console, exposed services running as a service account. If your current shell is a normal user, see [Windows PrivEsc](../../post-exploitation/windows-privesc.md) for other Windows escalation routes (unquoted service paths, AlwaysInstallElevated, AutoLogon creds, etc.) — most of those don't go through SeImpersonate at all.
+
+---
+
 ## Can You Do This Remotely From Kali?
 
 **Short answer: No — not directly.**

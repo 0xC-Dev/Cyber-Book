@@ -10,6 +10,18 @@ The krbtgt account signs every Kerberos TGT in the domain. If you have its hash,
 
 ---
 
+## Privileges Required
+
+| Phase | Account / Privilege | Why |
+|---|---|---|
+| **Setup** — obtain the krbtgt hash | **Domain Admin** OR DCSync rights (`DS-Replication-Get-Changes` + `DS-Replication-Get-Changes-All`) on the domain | Only privileged accounts can replicate secrets from a DC |
+| **Forge** the ticket | **None** — runs on your attacker box | Pure offline math once you have the hash |
+| **Exploit** — use the forged TGT | **None** | The ticket *is* the credential — DCs accept it as whoever you wrote in (Administrator, etc.) |
+
+**Get there:** You need DA before this attack. If you don't have it yet, work the AD attack chain — [Kerberoasting](../post-compromise/kerberoasting.md) to crack a service account, [ACL Abuse](../post-compromise/acl-abuse.md) / [BloodHound](../enumeration/bloodhound.md) for escalation paths, [ADCS Attacks](../post-compromise/adcs-attacks.md) for cert-based shortcuts, [SMB Relay](../initial-access/smb-relay.md) / [LLMNR Poisoning](../initial-access/llmnr-poisoning.md) for initial credentials. For host-level escalation: [Windows PrivEsc](../../post-exploitation/windows-privesc.md).
+
+---
+
 ## When You Use This
 
 **You just dumped krbtgt hash** (via DCSync or NTDS.dit) and want:

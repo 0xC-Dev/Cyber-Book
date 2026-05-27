@@ -49,6 +49,23 @@ Certipy outputs a summary of each vulnerable template with the ESC number. That 
 
 ---
 
+## Privileges Required (per ESC)
+
+| Step | Privilege | Why |
+|---|---|---|
+| **Enumerate templates** (`certipy find`) | **Any authenticated domain user** | LDAP read on the Configuration NC is granted to all authed users |
+| **ESC1** (SAN abuse) | Enrollment rights on the vulnerable template (often granted to broad groups like Domain Users) | The misconfig (`ENROLLEE_SUPPLIES_SUBJECT` + low-priv enrollment) IS the privesc |
+| **ESC2** (any-purpose EKU) | Enrollment rights on the template | Same low-priv enrollment idea — cert's EKU lets you use it for any purpose |
+| **ESC3** (Enrollment Agent abuse) | Enrollment rights on the Enrollment Agent template | EA cert grants "request on behalf of" any user |
+| **ESC4** (template ACL abuse) | **Write permission** on a certificate template (often via group nesting / forgotten ACLs) | You don't exploit a misconfig — you *create one* by writing a vulnerable EKU/flag to the template |
+| **ESC8** (NTLM relay → web enrollment) | **A position to coerce + relay** — your account can be unprivileged | The relayed identity is a *machine account* (often the DC) coerced via PetitPotam/PrinterBug |
+| **Request the cert** (`certipy req`) | Whatever the template requires (rows above) | Normal AD enrollment activity |
+| **Authenticate with the cert** (`certipy auth`) | **None** | Cert *is* the credential — returns a TGT + NTLM hash |
+
+**Get there:** ADCS is unusually generous — most ESCs work from **any authenticated domain user** as long as the template misconfig already exists. The privesc lives in the template, not your account. Always run `certipy find -vulnerable` early. For ESC8 specifically, you need a [relay position](../initial-access/smb-relay.md) (Responder + ntlmrelayx on the network) and a coercion primitive (PetitPotam, PrinterBug — covered in the relay note). For ESC4 you need write rights on a template, which often comes from [ACL Abuse](acl-abuse.md) paths visible in [BloodHound](../enumeration/bloodhound.md).
+
+---
+
 ## ESC1 — Enrollee Supplies Subject (SAN Abuse)
 
 ### Why It's Vulnerable
