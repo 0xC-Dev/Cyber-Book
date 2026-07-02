@@ -1,6 +1,6 @@
 # Passive Recon & OSINT
 
-> No direct contact with target systems — all open-source discovery.
+> No direct contact with target systems - all open-source discovery.
 
 ---
 
@@ -35,7 +35,7 @@ sublist3r -d target.com -o subdomains.txt
 
 | Tool | Usage |
 |---|---|
-| **Wappalyzer** | Browser extension — tech stack detection |
+| **Wappalyzer** | Browser extension - tech stack detection |
 | **WhatWeb** | CLI fingerprinting tool |
 | **BuiltWith** | Web-based stack analysis |
 | **Netcat** | Banner grabbing |
@@ -50,10 +50,10 @@ nc -nv <ip> 80
 ## Location & Physical OSINT
 
 - Satellite images (Google Maps, Bing Maps)
-- Job postings → reveals tech stack, tools used, department sizes
-- LinkedIn → employee names, titles, org structure, tech mentions
-- GitHub → leaked credentials, internal tooling, config files
-- Shodan → internet-exposed services on target IPs
+- Job postings -> reveals tech stack, tools used, department sizes
+- LinkedIn -> employee names, titles, org structure, tech mentions
+- GitHub -> leaked credentials, internal tooling, config files
+- Shodan -> internet-exposed services on target IPs
 
 ---
 

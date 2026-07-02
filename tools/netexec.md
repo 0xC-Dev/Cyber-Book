@@ -12,7 +12,7 @@ cd /opt/Netexec && git pull && pipx reinstall .
 ## Host Discovery & SMB Info
 
 ```sh
-# Scan subnet — shows OS, hostname, domain, SMB signing status
+# Scan subnet - shows OS, hostname, domain, SMB signing status
 nxc smb <ip/cidr>
 ```
 
@@ -149,10 +149,10 @@ smbclient //<ip>/<share> -N -c 'recurse ON; prompt OFF; mget *'
 ## Protocol Support
 
 nxc supports multiple protocols:
-- `nxc smb` — Windows/SMB
-- `nxc ldap` — LDAP/Active Directory
-- `nxc ssh` — Linux SSH targets
-- `nxc winrm` — Windows Remote Management
-- `nxc rdp` — Remote Desktop Protocol
-- `nxc mssql` — SQL Server
-- `nxc ftp` — FTP servers
+- `nxc smb` - Windows/SMB
+- `nxc ldap` - LDAP/Active Directory
+- `nxc ssh` - Linux SSH targets
+- `nxc winrm` - Windows Remote Management
+- `nxc rdp` - Remote Desktop Protocol
+- `nxc mssql` - SQL Server
+- `nxc ftp` - FTP servers

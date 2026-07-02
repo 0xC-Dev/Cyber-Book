@@ -71,7 +71,7 @@ john combined.txt --wordlist=/usr/share/wordlists/rockyou.txt
 ## Hash Identification
 
 ```sh
-# hashid — identify unknown hashes
+# hashid - identify unknown hashes
 hashid '<hash>'
 hashid -m '<hash>'    # Shows hashcat mode number
 
@@ -84,13 +84,13 @@ hash-identifier
 ## Password Spraying
 
 ```sh
-# Hydra — SSH
+# Hydra - SSH
 hydra -l admin -P /usr/share/wordlists/rockyou.txt ssh://<ip>
 
-# Hydra — HTTP form
+# Hydra - HTTP form
 hydra -l admin -P rockyou.txt <ip> http-post-form "/login:username=^USER^&password=^PASS^:Invalid"
 
-# Hydra — SMB
+# Hydra - SMB
 hydra -L users.txt -P passwords.txt smb://<ip>
 
 # NetExec spray (AD)

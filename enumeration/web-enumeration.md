@@ -37,7 +37,7 @@ nikto -h http://<ip> -p 8080
 ---
 
 ## Dirbuster
-GUI tool — good for targeted searches with custom file extensions.
+GUI tool - good for targeted searches with custom file extensions.
 
 Wordlists location: `/usr/share/wordlists/dirbuster/`
 > Adding file extensions increases scan time significantly.
@@ -72,8 +72,8 @@ burpsuite
 ```
 
 ### Quick Workflow
-1. Configure browser proxy → 127.0.0.1:8080
-2. Intercept → Forward through interesting requests
+1. Configure browser proxy -> 127.0.0.1:8080
+2. Intercept -> Forward through interesting requests
 3. Send to Repeater for manual testing
 4. Use Intruder for fuzzing / brute force
 
@@ -93,10 +93,10 @@ burpsuite
 
 ## What to Look For
 
-- Login pages → default creds, SQLi, auth bypass
-- Upload functionality → webshell upload
-- File includes → LFI/RFI
-- URL parameters → SQLi, path traversal
-- Version numbers in headers/footers → searchsploit for CVEs
-- `/robots.txt` and `/sitemap.xml` → hidden paths
-- Source code comments → credentials, internal paths
+- Login pages -> default creds, SQLi, auth bypass
+- Upload functionality -> webshell upload
+- File includes -> LFI/RFI
+- URL parameters -> SQLi, path traversal
+- Version numbers in headers/footers -> searchsploit for CVEs
+- `/robots.txt` and `/sitemap.xml` -> hidden paths
+- Source code comments -> credentials, internal paths

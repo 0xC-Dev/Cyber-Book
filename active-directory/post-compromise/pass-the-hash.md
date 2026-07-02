@@ -1,15 +1,15 @@
 # Pass the Hash / Pass the Password
 
-> **Note:** CrackMapExec is deprecated — use **netexec** (`nxc`) instead.
+> **Note:** CrackMapExec is deprecated - use **netexec** (`nxc`) instead.
 > Update netexec: `cd /opt/Netexec && git pull && pipx reinstall .`
 
 ---
 
 ## What Is It and Why Does It Work?
 
-When Windows authenticates over the network using NTLM, it never sends or verifies the plaintext password. Instead, it sends a **hash-based proof**: the server sends a challenge, the client signs it with the NT hash, and sends back the response. The server does not care what the original password was — it just verifies the hash math.
+When Windows authenticates over the network using NTLM, it never sends or verifies the plaintext password. Instead, it sends a **hash-based proof**: the server sends a challenge, the client signs it with the NT hash, and sends back the response. The server does not care what the original password was - it just verifies the hash math.
 
-**This means: if you have the NT hash, you can authenticate as that user without ever knowing their password.** You are not cracking anything — you are giving Windows exactly what it expects.
+**This means: if you have the NT hash, you can authenticate as that user without ever knowing their password.** You are not cracking anything - you are giving Windows exactly what it expects.
 
 This works against:
 - SMB (file shares, psexec, nxc)
@@ -18,7 +18,7 @@ This works against:
 - Many other NTLM-capable services
 
 - `(Pwn3d!)` in output = **local admin** on that machine
-- **Only NT hashes can be passed.** The NT hash is the MD4 hash of the user's password, stored in SAM/NTDS (16 bytes, 32 hex characters). NetNTLMv2 hashes captured by Responder are challenge-response authentication exchanges — not password hashes. They must be cracked offline or relayed, never passed directly. Don't confuse "NT hash" (password hash) with "NTLMv1/NTLMv2" (auth protocols that use the NT hash).
+- **Only NT hashes can be passed.** The NT hash is the MD4 hash of the user's password, stored in SAM/NTDS (16 bytes, 32 hex characters). NetNTLMv2 hashes captured by Responder are challenge-response authentication exchanges - not password hashes. They must be cracked offline or relayed, never passed directly. Don't confuse "NT hash" (password hash) with "NTLMv1/NTLMv2" (auth protocols that use the NT hash).
 
 ---
 
@@ -26,8 +26,8 @@ This works against:
 
 | Phase | Account / Privilege | Why |
 |---|---|---|
-| **Setup** — obtain the NT hash | **Local Admin** on a host (dump LSASS/SAM) OR **DCSync rights** for domain accounts (dump NTDS) | Hash source dictates privilege — workstation SAM vs domain NTDS |
-| **Exploit** — pass the hash to the target | **The hashed user must be Local Admin on the TARGET host** | PTH is just NTLM auth with the hash standing in for the password. Auth succeeds for *any* valid user, but useful file/shell access requires that user to be local admin on the target. `(Pwn3d!)` in netexec = admin; blank = auth worked but no admin rights |
+| **Setup** - obtain the NT hash | **Local Admin** on a host (dump LSASS/SAM) OR **DCSync rights** for domain accounts (dump NTDS) | Hash source dictates privilege - workstation SAM vs domain NTDS |
+| **Exploit** - pass the hash to the target | **The hashed user must be Local Admin on the TARGET host** | PTH is just NTLM auth with the hash standing in for the password. Auth succeeds for *any* valid user, but useful file/shell access requires that user to be local admin on the target. `(Pwn3d!)` in netexec = admin; blank = auth worked but no admin rights |
 | **RDP via PTH** | Target must have **Restricted Admin Mode** enabled | Without it, RDP requires plaintext, not hash |
 
 **Get there:** [Windows PrivEsc](../../post-exploitation/windows-privesc.md) for getting local admin on the host you've reached. Once you have admin: [Mimikatz](../../tools/mimikatz.md) `sekurlsa::logonPasswords` or `secretsdump -local` to harvest hashes from that host. Spray harvested hashes across the network with `netexec smb <range> -u <user> -H <hash>` to find where else that user is admin (lateral movement).
@@ -107,9 +107,9 @@ Shows all hosts, credentials, and pwned machines from previous runs.
 
 | Finding | Remediation |
 |---|---|
-| Same local admin password across machines | Deploy **LAPS** (Local Administrator Password Solution) — randomizes local admin password per machine, so a compromised hash on one machine does not work on any other |
-| PTH from domain account | Enable **Protected Users** security group for privileged accounts — forces Kerberos-only auth, blocks NTLM |
-| NTLM used at all | Set GPO: `Network security: LAN Manager authentication level` → `Send NTLMv2 response only. Refuse LM & NTLM` — forces NTLMv2 minimum, and ideally restrict NTLM entirely to force Kerberos |
+| Same local admin password across machines | Deploy **LAPS** (Local Administrator Password Solution) - randomizes local admin password per machine, so a compromised hash on one machine does not work on any other |
+| PTH from domain account | Enable **Protected Users** security group for privileged accounts - forces Kerberos-only auth, blocks NTLM |
+| NTLM used at all | Set GPO: `Network security: LAN Manager authentication level` -> `Send NTLMv2 response only. Refuse LM & NTLM` - forces NTLMv2 minimum, and ideally restrict NTLM entirely to force Kerberos |
 | SeDebugPrivilege allowing LSASS dump | Remove unnecessary privileges; enable **LSA Protection** (`RunAsPPL`) so LSASS cannot be read without a signed driver |
 | Local admin on too many machines | Audit local admin group membership across all machines; implement tiered admin model |
 

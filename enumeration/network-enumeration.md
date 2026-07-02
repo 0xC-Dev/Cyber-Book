@@ -1,19 +1,19 @@
-﻿# Network Enumeration
+# Network Enumeration
 
 ## Standard Nmap Workflow
 
-### Step 1 — Fast Port Discovery
+### Step 1 - Fast Port Discovery
 ```sh
 nmap -T4 -p- --min-rate 5000 <ip> -oN ports.txt
 ```
 
-### Step 2 — Deep Scan on Open Ports
+### Step 2 - Deep Scan on Open Ports
 ```sh
 # Substitute open ports found above
 nmap -sC -sV -p 22,80,443 <ip> -oN detailed.txt
 ```
 
-### Step 3 — UDP (if needed)
+### Step 3 - UDP (if needed)
 ```sh
 nmap -sU --top-ports 20 <ip>
 ```
@@ -37,7 +37,7 @@ enum4linux -a <ip>
 | 25/465/587 | SMTP | `nmap -sC -p25`, `nc <ip> 25` EHLO |
 | 53 | DNS | Zone transfer, `dig axfr @<ip> domain.com` |
 | 80/443 | HTTP/HTTPS | See [Web Enumeration](web-enumeration.md) |
-| 88 | Kerberos | AD present — try kerbrute |
+| 88 | Kerberos | AD present - try kerbrute |
 | 111 | RPC | `rpcinfo -p <ip>` |
 | 135/139/445 | SMB/NetBIOS | See [Service Enumeration](service-enumeration.md) |
 | 161/162 | SNMP | `snmpwalk`, community string check |

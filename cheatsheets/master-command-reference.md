@@ -13,7 +13,7 @@ nmap -T4 -p- --min-rate 5000 <ip> -oN ports.txt
 # Detailed scan on open ports
 nmap -sC -sV -p <ports> <ip> -oN detailed.txt
 
-# Rustscan → Nmap
+# Rustscan -> Nmap
 rustscan -a <ip> -- -A
 
 # SMB signing check (find relay targets)

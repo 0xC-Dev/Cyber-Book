@@ -1,4 +1,4 @@
-﻿# Service Enumeration
+# Service Enumeration
 
 ---
 

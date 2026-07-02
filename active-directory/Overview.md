@@ -14,7 +14,7 @@
 ### AD DS Data Store (Ntds.dit)
 - Database storing: users, groups, security descriptors, **password hashes**
 - Default location: `%SystemRoot%\NTDS\ntds.dit`
-- Only accessible through DC processes — dumping it = owning the domain
+- Only accessible through DC processes - dumping it = owning the domain
 - See [Dumping NTDS.dit](domain-compromise/dumping-ntds.md)
 
 ---
@@ -39,7 +39,7 @@
 ### Forest
 - Collection of domain trees
 - **Enterprise Admins** and **Schema Admins** are forest-wide
-- Compromise one domain → potential forest-wide access
+- Compromise one domain -> potential forest-wide access
 
 ### Organizational Units (OUs)
 - Containers for objects (users, computers, groups)
@@ -62,19 +62,19 @@
 ### Attack Flow
 ```
 Initial access
-    ↓
-LLMNR/SMB Relay → Get NTLMv2 hash → Crack or relay
-    ↓
+    v
+LLMNR/SMB Relay -> Get NTLMv2 hash -> Crack or relay
+    v
 Valid credentials
-    ↓
+    v
 Enumerate with BloodHound / PowerView
-    ↓
+    v
 Attack paths:
-- Kerberoasting → crack TGS hash
-- Pass the Hash → lateral movement
-- Token impersonation → DA if lucky
-    ↓
-Domain Admin → Dump NTDS.dit → All hashes → Golden Ticket
+- Kerberoasting -> crack TGS hash
+- Pass the Hash -> lateral movement
+- Token impersonation -> DA if lucky
+    v
+Domain Admin -> Dump NTDS.dit -> All hashes -> Golden Ticket
 ```
 
 ---

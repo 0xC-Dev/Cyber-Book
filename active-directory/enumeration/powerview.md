@@ -1,4 +1,4 @@
-# PowerView — AD Enumeration
+# PowerView - AD Enumeration
 
 ## Setup
 
@@ -33,7 +33,7 @@ IEX $StandardText
 | Command | Purpose |
 |---|---|
 | `Get-DomainUser` | All users + attributes |
-| `Get-DomainUser -SPN` | Users with SPNs → Kerberoast targets |
+| `Get-DomainUser -SPN` | Users with SPNs -> Kerberoast targets |
 | `Get-DomainUser \| select samaccountname` | Just usernames |
 | `Get-DomainUser \| select samaccountname, logonCount` | Spot honeypot accounts (0 logons) |
 | `Get-UserProperty -Properties pwdlastset` | When passwords were last changed |
@@ -87,7 +87,7 @@ IEX $StandardText
 ## Share Enumeration
 
 ```powershell
-# PowerHuntShares — finds shares, sensitive files, ACLs
+# PowerHuntShares - finds shares, sensitive files, ACLs
 Import-Module C:\path\PowerHuntShares.psm1
 Invoke-HuntSMBShares -NoPing -OutputDirectory C:\output -HostList servers.txt
 
@@ -99,7 +99,7 @@ Get-DomainComputer -LDAPFilter "(&(objectClass=computer)(!(primaryGroupID=516)))
 
 ## OPSEC Notes
 
-- Stay away from targeting Domain Admins directly — they are the most monitored
+- Stay away from targeting Domain Admins directly - they are the most monitored
 - Focus on compromising local users first, then pivot up
-- No logon count = possible honeypot — do not target
+- No logon count = possible honeypot - do not target
 - Enterprise Admins group only shows in forest root domain (`-Domain <forest root>`)

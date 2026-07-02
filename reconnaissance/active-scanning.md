@@ -1,13 +1,13 @@
-﻿# Active Scanning
+# Active Scanning
 
-> Direct network contact — ensure you are authorized before running these.
+> Direct network contact - ensure you are authorized before running these.
 
 ---
 
 ## Host Discovery
 
 ```sh
-# ARP scan entire subnet (layer 2 — very reliable on local network)
+# ARP scan entire subnet (layer 2 - very reliable on local network)
 netdiscover -r 192.168.1.0/24
 
 # Nmap ping scan (no port scan)
@@ -51,13 +51,13 @@ nmap -sC -sV -p 22,80,443,445 <ip>
 |---|---|
 | `-sS` | TCP SYN stealth scan (default, needs root) |
 | `-sT` | TCP connect scan (no root needed, louder) |
-| `-sU` | UDP scan (very slow — use carefully) |
+| `-sU` | UDP scan (very slow - use carefully) |
 | `-sV` | Version detection |
 | `-sC` | Run default scripts |
 | `-A` | Version + scripts + OS + traceroute |
 | `-p-` | All 65535 TCP ports |
 | `-p 80,443` | Specific ports |
-| `-T4` | Speed (0=paranoid → 5=insane, T4 is good balance) |
+| `-T4` | Speed (0=paranoid -> 5=insane, T4 is good balance) |
 | `-Pn` | Skip host discovery (treat as up) |
 | `-O` | OS detection |
 | `--min-rate 5000` | Minimum packet rate |
@@ -66,7 +66,7 @@ nmap -sC -sV -p 22,80,443,445 <ip>
 
 ### UDP Scan (Common Ports)
 ```sh
-# UDP is slow — target common ports only
+# UDP is slow - target common ports only
 nmap -sU -p 53,67,68,69,123,161,162,500 <ip>
 ```
 

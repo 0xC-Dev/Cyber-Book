@@ -4,7 +4,7 @@
 
 Group Policy Preferences (GPP) allowed admins to embed credentials in XML policy files pushed to domain machines. Microsoft accidentally released the AES encryption key used, making all stored passwords trivially decryptable.
 
-- Patched in **MS14-025** — but patching does not delete existing files
+- Patched in **MS14-025** - but patching does not delete existing files
 - Files may still exist on old/unpatched DCs
 - Still regularly found on real pentests
 
@@ -36,7 +36,7 @@ gpp-decrypt <encrypted-cpassword-string>
 ```
 
 ### Online
-The AES key is publicly known — any gpp-decrypt tool works.
+The AES key is publicly known - any gpp-decrypt tool works.
 
 ---
 

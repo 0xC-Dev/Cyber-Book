@@ -1,6 +1,6 @@
 # Gaining Shell Access in AD
 
-## Pass the Hash → Shell
+## Pass the Hash -> Shell
 
 Once you have NTLM hashes from SAM or secretsdump, use them for shell access:
 
@@ -45,7 +45,7 @@ Requires port 5985 open and WinRM enabled.
 
 ---
 
-## Metasploit Shell → Incognito (Token Impersonation)
+## Metasploit Shell -> Incognito (Token Impersonation)
 
 ```sh
 # Once in meterpreter session
@@ -61,7 +61,7 @@ impersonate_token "DOMAIN\\DomainAdmin"
 rev2self
 ```
 
-If Domain Admin token is available → you have DA access. See [Token Impersonation](../post-compromise/token-impersonation.md).
+If Domain Admin token is available -> you have DA access. See [Token Impersonation](../post-compromise/token-impersonation.md).
 
 ---
 

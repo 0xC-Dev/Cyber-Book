@@ -73,7 +73,7 @@ C:\Users\<user>\AppData\Roaming\FileZilla\recentservers.xml
 
 ---
 
-## LFI → RCE via Log Poisoning
+## LFI -> RCE via Log Poisoning
 
 ```sh
 # 1. Inject PHP code into Apache access log via User-Agent
@@ -130,8 +130,8 @@ ffuf -u "http://target.com/page?file=FUZZ" -w /usr/share/seclists/Fuzzing/LFI/LF
 | Finding | Remediation |
 |---|---|
 | Path traversal / LFI | **Canonicalize the path and validate it's within the allowed base directory.** In PHP: `realpath($base . $userInput)` then check it starts with `$base`. In Python: `os.path.realpath()` then check with `startswith(base_dir)`. |
-| `../` accepted in input | Strip `../` sequences — but do this AFTER URL-decoding and canonicalization, not before (double encoding bypasses strip-then-check). |
-| App loads arbitrary filenames from params | Switch to an **indirect reference** approach — instead of `?file=report.pdf`, use `?file=3` where 3 is a database ID. The server resolves the actual path internally; the user never controls the filename. |
+| `../` accepted in input | Strip `../` sequences - but do this AFTER URL-decoding and canonicalization, not before (double encoding bypasses strip-then-check). |
+| App loads arbitrary filenames from params | Switch to an **indirect reference** approach - instead of `?file=report.pdf`, use `?file=3` where 3 is a database ID. The server resolves the actual path internally; the user never controls the filename. |
 | RFI (remote file inclusion) | Disable `allow_url_include` in `php.ini` (it defaults to Off in modern PHP). Audit PHP config on the server. |
 | Log poisoning possible | Restrict web server read access to log files. Run the web server process as a non-root user so it can't access logs outside its own scope. |
 

