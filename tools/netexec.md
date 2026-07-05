@@ -48,13 +48,29 @@ nxc smb <ip> -u 'guest' -p '' -M spider_plus -o DOWNLOAD_FLAG=True OUTPUT_FOLDER
 
 ### RID Brute Force (Enumerate Users via SID)
 ```sh
-nxc smb <ip> -u '' -p '' --rid-brute
+nxc smb <ip> -u '' -p '' --rid-brute | grep SidTypeUser | sed 's/.*\\//; s/(.*//'
 ```
+
+SIDTypes:
+- `SidTypeUser` (1): A standard user account.
+- `SidTypeGroup` (2): A global or domain group account.
+- `SidTypeDomain` (3): A domain object.
+- `SidTypeAlias` (4): A local group or alias.
+- `SidTypeWellKnownGroup` (5): A group with a constant, predefined SID (e.g., Everyone or Administrators).
+- `SidTypeDeletedAccount` (6): A SID that belongs to an account that has been deleted.
+- `SidTypeInvalid` (7): An invalid SID.
+- `SidTypeUnknown` (8): An unknown SID type (e.g., the object no longer exists).
+- `SidTypeComputer` (9): A computer account.
+- `SidTypeLabel` (10): An integrity label.
+- `SidTypeLogonSession` (11): A logon session
+Review the [Microsoft Learn SID_NAME_USE Documentation](https://www.google.com/url?sa=i&source=web&rct=j&url=https://learn.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-sid_name_use&ved=2ahUKEwj2wrLPlbyVAxUZuSsGHXMBBVQQy_kOegoIAggACAAIChAC&opi=89978449&cd&psig=AOvVaw0eibFCESkvPq3L35w8MVhJ&ust=1783362624946000) for the full C++ definitions and structural details.
 
 RID format: `S-1-5-21-<DomainID>-<RID>`
 - `500` = Administrator
 - `501` = Guest
 - `1000+` = Regular users
+
+
 
 ### Get User Descriptions (LDAP)
 ```sh
