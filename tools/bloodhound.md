@@ -71,6 +71,11 @@ nxc ldap <DC-IP> -u jdoe -p Password1 --bloodhound --collection All --dns-server
 # Generates a zip file - transfer to Kali and import
 ```
 
+**If data doesn't delete from GUI, open Neo4j console**
+```sql
+MATCH (n) DETACH DELETE n
+```
+
 ---
 
 ## Importing Data
