@@ -2,8 +2,6 @@
 
 Full syntax and every flag explained: [Mimikatz](../../tools/mimikatz.md)
 
-> ⚠️ **Do NOT use during a real engagement.** Skeleton Key breaks Kerberos PKINIT / smartcard / certificate auth on the patched DC because it forces RC4 and downgrades the AES keys in LSASS. Any environment using ADCS, smartcards, or Windows Hello for Business will start failing logons - this is loud, disruptive, and immediately noticed. **Lab use only.**
-
 ---
 
 ## What It Is

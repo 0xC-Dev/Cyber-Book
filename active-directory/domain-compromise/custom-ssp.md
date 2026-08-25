@@ -4,8 +4,6 @@ Full syntax and every flag explained: [Mimikatz](../../tools/mimikatz.md)
 
 >  **Persistence + credential harvesting.** Unlike [Skeleton Key](skeleton-key.md) (a backdoor password) or [DSRM](dsrm.md) (a backdoor account), a Custom SSP passively logs every authentication that hits the box - usernames AND **plaintext passwords** - for as long as it's loaded.
 
-> ⚠️ **Lab use only.** Loading an unsigned DLL into LSASS is one of the loudest IOCs in Windows. **LSA Protection (RunAsPPL)** blocks the on-disk variant entirely. Do not use on real engagements.
-
 ---
 
 ## What It Is
