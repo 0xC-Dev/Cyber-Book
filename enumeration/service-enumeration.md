@@ -49,6 +49,9 @@ smbclient -L //<ip> -N
 # Connect to share (null)
 smbclient -U 'a' -N //<ip>/<share>
 
+# Connect with user
+smbclient -U 'domain\user%password' //<ip>/<share>
+
 # Download all files recursively
 smbclient //<ip>/<share> -N -c 'recurse ON; prompt OFF; mget *'
 ```
