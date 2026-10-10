@@ -107,3 +107,4 @@
 * [Reverse Shells](cheatsheets/reverse-shells.md)
 * [Hash Types & Cracking](cheatsheets/hash-types-cracking.md)
 * [File Transfers](cheatsheets/file-transfers.md)
+* [Troubleshooting / Tool Fixes](cheatsheets/troubleshooting.md)

